@@ -103,6 +103,14 @@ First controllable variable: **ΔTmin only** (streams locked).
 | ITC 3 | Frontend / integration |
 | Chemical Engineering | Scientific validation |
 
+## Team workflow
+
+To avoid merge conflicts while working in parallel, follow the ownership map,
+branch names, and shared contracts in [docs/team_workflow.md](docs/team_workflow.md).
+
+**Short version:** edit only your owned folders; share contracts (`run_pinch_analysis`,
+`/pinch`, experiment JSON), not each other’s implementation files.
+
 ## Secrets
 
 Copy `.env.example` to `.env` and fill keys locally.
