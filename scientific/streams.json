@@ -1,0 +1,47 @@
+{
+  "process": "sulfuric_acid_hen_benchmark",
+  "units": {
+    "temperature": "C",
+    "fcp": "kW/C",
+    "h": "kW/m2C",
+    "heat_load": "kW"
+  },
+  "streams": [
+    {
+      "id": "H1",
+      "type": "hot",
+      "supply_temp_c": 180,
+      "target_temp_c": 60,
+      "fcp_kw_per_c": 3.5,
+      "h_kw_per_m2c": 0.43,
+      "heat_load_kw": 420
+    },
+    {
+      "id": "H2",
+      "type": "hot",
+      "supply_temp_c": 140,
+      "target_temp_c": 30,
+      "fcp_kw_per_c": 1.5,
+      "h_kw_per_m2c": 0.34,
+      "heat_load_kw": 165
+    },
+    {
+      "id": "C1",
+      "type": "cold",
+      "supply_temp_c": 45,
+      "target_temp_c": 115,
+      "fcp_kw_per_c": 2.0,
+      "h_kw_per_m2c": 0.25,
+      "heat_load_kw": 140
+    },
+    {
+      "id": "C2",
+      "type": "cold",
+      "supply_temp_c": 70,
+      "target_temp_c": 160,
+      "fcp_kw_per_c": 5.0,
+      "h_kw_per_m2c": 0.32,
+      "heat_load_kw": 450
+    }
+  ]
+}

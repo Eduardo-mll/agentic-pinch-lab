@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+.vite/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local results / caches (keep structure, ignore generated noise)
+evidence/cache/*
+!evidence/cache/.gitkeep
+results/runs/*
+!results/runs/.gitkeep
+
+# Secrets / local notes
+*.pem
+*.key
+.env.*
+!.env.example

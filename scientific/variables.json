@@ -1,0 +1,25 @@
+{
+  "controllable": [
+    {
+      "name": "delta_t_min",
+      "unit": "C",
+      "min": 5,
+      "max": 30,
+      "baseline": 10,
+      "status": "provisional_range_needs_cheme_approval"
+    }
+  ],
+  "locked": [
+    "supply_temp_c",
+    "target_temp_c",
+    "fcp_kw_per_c",
+    "h_kw_per_m2c",
+    "stream_identity"
+  ],
+  "later_extensions": [
+    "stream_matching",
+    "heat_allocation",
+    "number_of_exchangers",
+    "stream_splitting"
+  ]
+}

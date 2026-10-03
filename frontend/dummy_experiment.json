@@ -1,0 +1,34 @@
+{
+  "run_id": "RUN-DEMO-001",
+  "question": "Can lowering ΔTmin reduce external utility demand?",
+  "evidence_ids": ["EVID-001"],
+  "hypothesis": {
+    "id": "HYP-001",
+    "text": "Reducing ΔTmin from 10 °C toward 7.5 °C may increase heat recovery and reduce external utilities.",
+    "status": "TESTED"
+  },
+  "experiment": {
+    "variable": "delta_t_min",
+    "baseline_value": 10,
+    "proposed_value": 7.5
+  },
+  "validation": {
+    "status": "PASS"
+  },
+  "result": {
+    "note": "Replace with real Python Pinch engine output",
+    "heat_recovery_kw": null,
+    "heating_utility_kw": null,
+    "cooling_utility_kw": null
+  },
+  "analysis": {
+    "status": "INCONCLUSIVE",
+    "learning": "Waiting for the real Pinch engine sensitivity implementation."
+  },
+  "next_decision": {
+    "reason": "Implement full Pinch calculation, then re-test ΔTmin = 7.5 °C",
+    "experiment": {
+      "delta_t_min": 7.5
+    }
+  }
+}

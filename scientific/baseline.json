@@ -1,0 +1,10 @@
+{
+  "baseline_id": "BASELINE-001",
+  "delta_t_min_c": 10,
+  "hot_pinch_c": 80,
+  "cold_pinch_c": 70,
+  "heat_recovery_kw": 490,
+  "heating_utility_kw": 100,
+  "cooling_utility_kw": 95,
+  "notes": "Known values from the original sulfuric-acid HEN Pinch Analysis project."
+}

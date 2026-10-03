@@ -1,0 +1,24 @@
+{
+  "rules": [
+    {
+      "id": "DELTA_T_MIN_RANGE",
+      "description": "delta_t_min must stay inside the approved search range",
+      "variable": "delta_t_min",
+      "min": 5,
+      "max": 30
+    },
+    {
+      "id": "NO_NEGATIVE_DELTA_T_MIN",
+      "description": "delta_t_min must be positive",
+      "reject_if": "delta_t_min <= 0"
+    },
+    {
+      "id": "LOCKED_STREAM_DATA",
+      "description": "Tin, Tout, FCp, h and stream identities cannot be changed without human approval"
+    },
+    {
+      "id": "KNOWN_STREAMS_ONLY",
+      "description": "Only streams H1, H2, C1, C2 are allowed in MVP"
+    }
+  ]
+}

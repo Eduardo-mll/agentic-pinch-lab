@@ -1,0 +1,18 @@
+# Who may use which tools (working draft).
+
+agents:
+  evidence:
+    may_retrieve_web: true
+    may_run_pinch: false
+  hypothesis:
+    may_retrieve_web: false
+    may_run_pinch: false
+    may_read_evidence_store: true
+  planner:
+    may_retrieve_web: false
+    may_propose_experiment: true
+    may_run_pinch: false
+  analyst:
+    may_retrieve_web: false
+    may_rewrite_numbers: false
+    may_read_python_results: true

@@ -1,0 +1,20 @@
+# Simple scientific limits for the MVP.
+# Exact Omnigent schema may change — keep these values easy to port.
+
+delta_t_min:
+  min: 5
+  max: 30
+  unit: C
+
+locked_variables:
+  - supply_temp_c
+  - target_temp_c
+  - fcp_kw_per_c
+  - h_kw_per_m2c
+  - stream_identity
+
+allowed_streams:
+  - H1
+  - H2
+  - C1
+  - C2
