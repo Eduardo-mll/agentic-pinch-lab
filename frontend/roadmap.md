@@ -1,0 +1,7 @@
+- [x] Rework the single scientific workspace into a long-scroll layout inspired by the supplied visual references.
+- [x] Preserve sample-data labeling and clear AI-versus-engine provenance throughout.
+- [x] Verify desktop/mobile layout, controls, and preview build.
+- [x] Use the newly uploaded hero image and complete the originally requested dashboard labels and states.
+- [x] Add a typed, validated API adapter for the discovery handoff without changing the visual design.
+- [x] Wire the cycle to returned experiments, evidence, provenance, learning, and next decision when configured.
+- [ ] Document backend configuration and verify demo and connected states (connected state awaits a reachable backend).

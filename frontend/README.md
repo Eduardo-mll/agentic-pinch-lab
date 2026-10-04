@@ -1,20 +1,29 @@
-# Frontend (ITC 3)
+# Welcome to your Lovable project
 
-Build a **scientific loop dashboard**, not a chatbot UI.
+This project was built with [Lovable](https://lovable.dev).
 
-Show clearly:
+## Build with Lovable
 
-- Evidence
-- Hypothesis
-- Experiment
-- Result
-- Learning
-- Next decision
+Open your project in the [Lovable editor](https://lovable.dev) and keep building.
 
-Easy start:
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
+- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
 
-1. Hardcode one JSON experiment object
-2. Render it as a simple page
-3. Later replace dummy JSON with the FastAPI backend
+## Development
 
-Suggested stack later: React + Vite, or Lovable-generated React.
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
+```
+
+## Built with
+
+- TanStack Start
+- TypeScript
+- React
+- Tailwind CSS
