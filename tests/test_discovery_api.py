@@ -30,6 +30,17 @@ def test_discovery_run(tmp_path, monkeypatch):
     assert payload["agentic_proof"]["second_changed"] is True
     assert len(payload["experiments"]) == 2
 
+    again = client.post("/discovery/run", json={"steps": 2})
+    assert again.status_code == 200
+    continued = again.json()
+    assert continued["steps"] == 1
+    assert len(continued["experiments"]) == 3
+    latest = continued["experiments"][-1]
+    assert latest["experiment"]["proposed_value"] == 12.5
+    assert latest["experiment"]["experiment_id"] == "EXP-003"
+    assert latest["hypothesis"]["id"] == "HYP-003"
+    assert "previous experiment at 10" in latest["hypothesis"]["text"]
+
 
 def test_lab_status_exposes_approval_and_measurement():
     response = client.get("/lab/status")

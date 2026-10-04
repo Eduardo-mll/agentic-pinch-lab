@@ -152,11 +152,54 @@ def _save_record(record: dict) -> Path:
     return path
 
 
-def run_loop(steps: int = 2) -> list[dict]:
+def load_saved_records() -> list[dict]:
+    """Return saved run files, oldest first."""
+    if not RESULTS_DIR.exists():
+        return []
     records: list[dict] = []
-    previous_result: dict | None = None
-    previous_analysis: dict | None = None
-    preferred_next: float | None = None
+    for path in sorted(RESULTS_DIR.glob("RUN-*.json"), key=lambda item: item.stat().st_mtime):
+        try:
+            item = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        if isinstance(item, dict):
+            item.pop("_saved_path", None)
+            records.append(item)
+    return records
+
+
+def continuation_from_latest() -> dict | None:
+    """Seed one new step from the last saved next ΔTmin and its result."""
+    saved = load_saved_records()
+    if not saved:
+        return None
+    latest = saved[-1]
+    next_value = (
+        latest.get("next_decision", {}).get("experiment", {}).get("delta_t_min")
+    )
+    if next_value is None:
+        return None
+    previous_result = dict(latest.get("result") or {})
+    previous_result["run_id"] = latest.get("run_id")
+    previous_analysis = dict(latest.get("analysis") or {})
+    previous_analysis["next_decision"] = latest.get("next_decision")
+    return {
+        "previous_result": previous_result,
+        "previous_analysis": previous_analysis,
+        "preferred_next": float(next_value),
+        "completed_count": len(saved),
+    }
+
+
+def run_loop(
+    steps: int = 2,
+    *,
+    previous_result: dict | None = None,
+    previous_analysis: dict | None = None,
+    preferred_next: float | None = None,
+    completed_count: int = 0,
+) -> list[dict]:
+    records: list[dict] = []
 
     evidence_pack = gather_evidence(question=QUESTION)
     citation_check = validate_evidence_ids(evidence_pack.get("evidence_ids", []))
@@ -174,16 +217,19 @@ def run_loop(steps: int = 2) -> list[dict]:
         if hypothesis.get("status") == "INSUFFICIENT_EVIDENCE":
             raise ValueError("INSUFFICIENT_EVIDENCE: cannot plan experiments yet.")
 
+        sequence = completed_count + len(records) + 1
         experiment = propose_experiment(
             hypothesis=hypothesis,
             previous_result=previous_result,
             preferred_delta_t_min=preferred_next,
+            sequence=sequence,
         )
         tested = float(experiment["proposed_value"])
         if previous_result is None:
             reference = "the 10 C baseline"
         else:
             reference = f"the previous experiment at {float(previous_result['delta_t_min']):g} C"
+        hypothesis["id"] = f"HYP-{sequence:03d}"
         hypothesis["text"] = (
             f"Testing whether delta_t_min = {tested:g} C lowers total network cost "
             f"relative to {reference}."

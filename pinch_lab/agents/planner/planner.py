@@ -9,6 +9,7 @@ def propose_experiment(
     hypothesis: dict[str, Any],
     previous_result: dict[str, Any] | None = None,
     preferred_delta_t_min: float | None = None,
+    sequence: int | None = None,
 ) -> dict[str, Any]:
     """Select one ΔTmin experiment.
 
@@ -29,6 +30,8 @@ def propose_experiment(
             "external utility demand decreases."
         )
         experiment_id = "EXP-001"
+    if sequence is not None:
+        experiment_id = f"EXP-{int(sequence):03d}"
 
     return {
         "experiment_id": experiment_id,

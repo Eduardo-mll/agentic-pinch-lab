@@ -5,7 +5,13 @@ from __future__ import annotations
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from pinch_lab.run_discovery_loop import HISTORY_PATH, ROOT, run_loop
+from pinch_lab.run_discovery_loop import (
+    HISTORY_PATH,
+    ROOT,
+    continuation_from_latest,
+    load_saved_records,
+    run_loop,
+)
 from pinch_lab.tools.evidence_store import list_evidence, validate_evidence_ids
 from pathlib import Path
 import json
@@ -20,28 +26,24 @@ class DiscoveryRequest(BaseModel):
 @router.post("/discovery/run")
 def discovery_run(body: DiscoveryRequest | None = None) -> dict:
     """Run the local discovery loop and return the experiment records."""
-    steps = 2 if body is None else body.steps
-    records = run_loop(steps=steps)
-    # Drop private helper keys before returning.
-    clean = []
-    for record in records:
-        item = dict(record)
-        item.pop("_saved_path", None)
-        clean.append(item)
+    requested = 2 if body is None else body.steps
+    prior = continuation_from_latest()
+    if prior is None:
+        fresh = run_loop(steps=requested)
+    else:
+        fresh = run_loop(steps=1, **prior)
+    saved = load_saved_records()
+    previous = saved[-2] if len(saved) > 1 else saved[0]
+    latest = saved[-1]
     return {
         "status": "ok",
-        "steps": steps,
-        "experiments": clean,
+        "steps": len(fresh),
+        "experiments": saved,
         "agentic_proof": {
-            "first_delta_t_min": clean[0]["experiment"]["proposed_value"],
-            "second_delta_t_min": clean[1]["experiment"]["proposed_value"]
-            if len(clean) > 1
-            else None,
-            "second_changed": (
-                len(clean) > 1
-                and clean[0]["experiment"]["proposed_value"]
-                != clean[1]["experiment"]["proposed_value"]
-            ),
+            "first_delta_t_min": previous["experiment"]["proposed_value"],
+            "second_delta_t_min": latest["experiment"]["proposed_value"],
+            "second_changed": previous["experiment"]["proposed_value"]
+            != latest["experiment"]["proposed_value"],
         },
     }
 
