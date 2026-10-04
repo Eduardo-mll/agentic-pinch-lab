@@ -1,0 +1,38 @@
+{
+  "delta_t_min": 10,
+  "streams": [
+    {
+      "id": "H1",
+      "type": "hot",
+      "supply_temp": 180,
+      "target_temp": 60,
+      "fcp": 3.5,
+      "h": 0.43
+    },
+    {
+      "id": "H2",
+      "type": "hot",
+      "supply_temp": 140,
+      "target_temp": 30,
+      "fcp": 1.5,
+      "h": 0.34
+    },
+    {
+      "id": "C1",
+      "type": "cold",
+      "supply_temp": 45,
+      "target_temp": 115,
+      "fcp": 2.0,
+      "h": 0.25
+    },
+    {
+      "id": "C2",
+      "type": "cold",
+      "supply_temp": 70,
+      "target_temp": 160,
+      "fcp": 5.0,
+      "h": 0.32
+    }
+  ],
+  "notes": "Adapted for science-branch experiment_runner schema. Values match the sulfuric-acid HEN benchmark."
+}

@@ -32,11 +32,14 @@ and chooses a better next experiment.
 ```text
 agentic-pinch-lab/
 ├── backend/          # FastAPI + Pinch engine
-├── scientific/       # Stream data, baseline, constraints
-├── omnigent/         # Agents, tools, policies (later)
+├── pinch_lab/        # Discovery runtime (agents + tools in Python)
+├── src/              # Science Pinch engine (adapted from science branch)
+├── data/             # Baseline streams for science engine
+├── scientific/       # Human-readable scientific contract / evidence sources
+├── omnigent/         # Omnigent YAML agents (Claude coordinator)
 ├── evidence/         # Approved evidence registry
 ├── results/          # Experiment outputs (JSON)
-├── frontend/         # Dashboard (later)
+├── frontend/         # Dashboard
 ├── tests/            # pytest
 └── docs/             # Short architecture notes
 ```
@@ -78,11 +81,21 @@ pip install -e ".[dev]"
 pytest
 ```
 
-### 5. Run the API (when ready)
+### 5. Run the discovery loop
+
+```bash
+python -m pinch_lab.run_discovery_loop
+```
+
+### 6. Run the API
 
 ```bash
 uvicorn backend.main:app --reload
 ```
+
+### 7. Omnigent + Claude
+
+See [omnigent/INSTALL.md](omnigent/INSTALL.md).
 
 ## MVP goal
 

@@ -1,7 +1,32 @@
+spec_version: 1
 name: experiment_planner
-role: Propose one testable ΔTmin experiment for the current hypothesis.
-tools: []
-permissions:
-  may_retrieve_web: false
-  may_run_pinch: false
-  may_propose_experiment: true
+description: Propose one concrete delta_t_min computational experiment.
+
+instructions: AGENTS.md
+
+executor:
+  type: omnigent
+  config:
+    harness: claude
+  model: claude-sonnet-4-6
+  auth:
+    type: api_key
+    api_key: ${ANTHROPIC_API_KEY}
+
+os_env:
+  type: caller_process
+  cwd: ../../..
+  sandbox:
+    type: none
+
+tools:
+  run_experiment:
+    type: function
+    description: Optional dry-check of a candidate delta_t_min through the experiment tool.
+    callable: pinch_lab.omnigent_tools.tool_run_experiment
+    parameters:
+      type: object
+      properties:
+        delta_t_min:
+          type: number
+      required: [delta_t_min]

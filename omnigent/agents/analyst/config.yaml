@@ -1,7 +1,32 @@
+spec_version: 1
 name: scientific_analyst
-role: Interpret experiment results and propose the next scientific decision.
-tools: []
-permissions:
-  may_retrieve_web: false
-  may_rewrite_numbers: false
-  may_read_python_results: true
+description: Interpret experiment results and choose the next scientific decision.
+
+instructions: AGENTS.md
+
+executor:
+  type: omnigent
+  config:
+    harness: claude
+  model: claude-sonnet-4-6
+  auth:
+    type: api_key
+    api_key: ${ANTHROPIC_API_KEY}
+
+os_env:
+  type: caller_process
+  cwd: ../../..
+  sandbox:
+    type: none
+
+tools:
+  run_experiment:
+    type: function
+    description: Re-read or re-run an experiment if needed. Never invent numbers.
+    callable: pinch_lab.omnigent_tools.tool_run_experiment
+    parameters:
+      type: object
+      properties:
+        delta_t_min:
+          type: number
+      required: [delta_t_min]

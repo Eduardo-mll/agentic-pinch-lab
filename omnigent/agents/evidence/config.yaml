@@ -1,8 +1,48 @@
+spec_version: 1
 name: evidence_agent
-role: Retrieve and structure approved scientific evidence for the discovery question.
+description: Retrieve and structure approved local scientific evidence.
+
+instructions: AGENTS.md
+
+executor:
+  type: omnigent
+  config:
+    harness: claude
+  model: claude-sonnet-4-6
+  auth:
+    type: api_key
+    api_key: ${ANTHROPIC_API_KEY}
+
+os_env:
+  type: caller_process
+  cwd: ../../..
+  sandbox:
+    type: none
+
 tools:
-  - evidence_store
-permissions:
-  may_retrieve_web: false
-  may_run_pinch: false
-  may_write_evidence_store: true
+  gather_evidence:
+    type: function
+    description: Select approved local scientific evidence for the question.
+    callable: pinch_lab.omnigent_tools.tool_gather_evidence
+    parameters:
+      type: object
+      properties:
+        question:
+          type: string
+        limit:
+          type: integer
+          default: 3
+      required: [question]
+
+  validate_evidence_ids:
+    type: function
+    description: Validate that cited evidence IDs exist in the registry.
+    callable: pinch_lab.omnigent_tools.tool_validate_evidence_ids
+    parameters:
+      type: object
+      properties:
+        evidence_ids:
+          type: array
+          items:
+            type: string
+      required: [evidence_ids]

@@ -2,7 +2,7 @@
 
 Usage (from repo root, venv active):
 
-    python -m omnigent.run_discovery_loop
+    python -m pinch_lab.run_discovery_loop
 
 This proves: experiment #2 changes because of result #1.
 Later: replace fake_experiment with the real Pinch engine.
@@ -14,12 +14,12 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from omnigent.agents.analyst import analyze_result
-from omnigent.agents.evidence import gather_evidence
-from omnigent.agents.hypothesis import formulate_hypothesis
-from omnigent.agents.planner import propose_experiment
-from omnigent.tools import fake_experiment
-from omnigent.tools.evidence_store import validate_evidence_ids
+from pinch_lab.agents.analyst import analyze_result
+from pinch_lab.agents.evidence import gather_evidence
+from pinch_lab.agents.hypothesis import formulate_hypothesis
+from pinch_lab.agents.planner import propose_experiment
+from pinch_lab.tools import run_computational_experiment
+from pinch_lab.tools.evidence_store import validate_evidence_ids
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results" / "runs"
@@ -125,7 +125,7 @@ def _save_record(record: dict) -> Path:
             "path": rel_path,
         }
     )
-    history["notes"] = "Updated by omnigent/run_discovery_loop.py"
+    history["notes"] = "Updated by pinch_lab/run_discovery_loop.py"
     HISTORY_PATH.write_text(json.dumps(history, indent=2), encoding="utf-8")
     return path
 
@@ -156,7 +156,9 @@ def run_loop(steps: int = 2) -> list[dict]:
             previous_result=previous_result,
             preferred_delta_t_min=preferred_next,
         )
-        result = fake_experiment(delta_t_min=float(experiment["proposed_value"]))
+        result = run_computational_experiment(
+            delta_t_min=float(experiment["proposed_value"])
+        )
         analysis = analyze_result(hypothesis, experiment, result)
         record = _build_record(
             evidence_pack=evidence_pack,

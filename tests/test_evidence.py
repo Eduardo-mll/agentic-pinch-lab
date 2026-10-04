@@ -1,6 +1,6 @@
-from omnigent.agents.evidence import gather_evidence
-from omnigent.agents.hypothesis import formulate_hypothesis
-from omnigent.tools.evidence_store import validate_evidence_ids
+from pinch_lab.agents.evidence import gather_evidence
+from pinch_lab.agents.hypothesis import formulate_hypothesis
+from pinch_lab.tools.evidence_store import validate_evidence_ids
 
 
 def test_gather_evidence_returns_approved_ids():
@@ -30,14 +30,14 @@ def test_hypothesis_requires_evidence():
 
 
 def test_discovery_loop_includes_evidence(tmp_path, monkeypatch):
-    from omnigent.run_discovery_loop import run_loop
+    from pinch_lab.run_discovery_loop import run_loop
 
     monkeypatch.setattr(
-        "omnigent.run_discovery_loop.RESULTS_DIR",
+        "pinch_lab.run_discovery_loop.RESULTS_DIR",
         tmp_path / "runs",
     )
     monkeypatch.setattr(
-        "omnigent.run_discovery_loop.HISTORY_PATH",
+        "pinch_lab.run_discovery_loop.HISTORY_PATH",
         tmp_path / "experiments.json",
     )
 

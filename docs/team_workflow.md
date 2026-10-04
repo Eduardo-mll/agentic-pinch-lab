@@ -6,7 +6,7 @@ Goal: let people work on **agents + API glue**, **Pinch Python**, and **frontend
 
 | Person / pair | Owns (write freely) | Do not edit without asking |
 |---|---|---|
-| Agents + backend glue | `omnigent/`, `backend/main.py`, future `backend/api/`, `backend/experiments/`, `evidence/`, agent-related tests | `backend/pinch/`, `frontend/` |
+| Agents + backend glue | `omnigent/` (YAML), `pinch_lab/` (Python runtime), `backend/main.py`, `backend/api/`, `evidence/`, agent-related tests | `backend/pinch/`, `frontend/` |
 | Pinch Python + UI | `backend/pinch/`, `scientific/`, `frontend/`, pinch math tests | `omnigent/` |
 | Shared carefully | `README.md`, `docs/`, `pyproject.toml`, root config | — |
 

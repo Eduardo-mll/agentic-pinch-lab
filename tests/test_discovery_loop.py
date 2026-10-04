@@ -1,14 +1,14 @@
-from omnigent.run_discovery_loop import run_loop
+from pinch_lab.run_discovery_loop import run_loop
 
 
 def test_second_experiment_changes_because_of_first_result(tmp_path, monkeypatch):
     # Keep test artifacts out of the real results folder.
     monkeypatch.setattr(
-        "omnigent.run_discovery_loop.RESULTS_DIR",
+        "pinch_lab.run_discovery_loop.RESULTS_DIR",
         tmp_path / "runs",
     )
     monkeypatch.setattr(
-        "omnigent.run_discovery_loop.HISTORY_PATH",
+        "pinch_lab.run_discovery_loop.HISTORY_PATH",
         tmp_path / "experiments.json",
     )
 
@@ -27,5 +27,8 @@ def test_second_experiment_changes_because_of_first_result(tmp_path, monkeypatch
 
     # Second experiment must come from analyst next_decision of the first.
     assert second_dt == records[0]["next_decision"]["experiment"]["delta_t_min"]
-    assert records[0]["result"]["generated_by"] == "FAKE_EXPERIMENT"
+    assert records[0]["result"]["generated_by"] in {
+        "SCIENCE_PINCH_ENGINE",
+        "FAKE_EXPERIMENT",
+    }
     assert records[0]["analysis"]["status"] in {"SUPPORTED", "REJECTED", "INCONCLUSIVE"}

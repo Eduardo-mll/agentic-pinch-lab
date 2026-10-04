@@ -1,7 +1,35 @@
+spec_version: 1
 name: hypothesis_agent
-role: Formulate a falsifiable hypothesis about delta_t_min and utility demand.
-tools: []
-permissions:
-  may_retrieve_web: false
-  may_run_pinch: false
-  may_read_evidence_store: true
+description: Formulate a falsifiable hypothesis about delta_t_min and utilities.
+
+instructions: AGENTS.md
+
+executor:
+  type: omnigent
+  config:
+    harness: claude
+  model: claude-sonnet-4-6
+  auth:
+    type: api_key
+    api_key: ${ANTHROPIC_API_KEY}
+
+os_env:
+  type: caller_process
+  cwd: ../../..
+  sandbox:
+    type: none
+
+tools:
+  gather_evidence:
+    type: function
+    description: Read approved evidence before proposing a hypothesis.
+    callable: pinch_lab.omnigent_tools.tool_gather_evidence
+    parameters:
+      type: object
+      properties:
+        question:
+          type: string
+        limit:
+          type: integer
+          default: 3
+      required: [question]

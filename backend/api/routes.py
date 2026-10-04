@@ -5,8 +5,8 @@ from __future__ import annotations
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from omnigent.run_discovery_loop import HISTORY_PATH, ROOT, run_loop
-from omnigent.tools.evidence_store import list_evidence, validate_evidence_ids
+from pinch_lab.run_discovery_loop import HISTORY_PATH, ROOT, run_loop
+from pinch_lab.tools.evidence_store import list_evidence, validate_evidence_ids
 import json
 
 router = APIRouter(tags=["discovery"])

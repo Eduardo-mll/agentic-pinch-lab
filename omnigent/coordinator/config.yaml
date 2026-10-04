@@ -1,16 +1,73 @@
+spec_version: 1
 name: pinch_lab_coordinator
-workflow:
-  - evidence
-  - hypothesis
-  - planner
-  - experiment_tool
-  - analyst
-  - next_experiment
-agents:
-  - evidence
-  - hypothesis
-  - planner
-  - analyst
+description: >
+  Omnigent coordinator for the Agentic Process Energy Discovery Lab.
+  Orchestrates evidence, hypothesis, experiment, and learning for Pinch Analysis.
+
+instructions: AGENTS.md
+
+executor:
+  type: omnigent
+  config:
+    harness: claude
+  model: claude-sonnet-4-6
+  auth:
+    type: api_key
+    api_key: ${ANTHROPIC_API_KEY}
+
+os_env:
+  type: caller_process
+  cwd: ../..
+  sandbox:
+    type: none
+
 tools:
-  - evidence_store
-  - fake_experiment
+  gather_evidence:
+    type: function
+    description: Select approved local scientific evidence for the question.
+    callable: pinch_lab.omnigent_tools.tool_gather_evidence
+    parameters:
+      type: object
+      properties:
+        question:
+          type: string
+        limit:
+          type: integer
+          default: 3
+      required: [question]
+
+  validate_evidence_ids:
+    type: function
+    description: Validate that cited evidence IDs exist in the registry.
+    callable: pinch_lab.omnigent_tools.tool_validate_evidence_ids
+    parameters:
+      type: object
+      properties:
+        evidence_ids:
+          type: array
+          items:
+            type: string
+      required: [evidence_ids]
+
+  run_experiment:
+    type: function
+    description: Run one deterministic computational experiment for delta_t_min.
+    callable: pinch_lab.omnigent_tools.tool_run_experiment
+    parameters:
+      type: object
+      properties:
+        delta_t_min:
+          type: number
+      required: [delta_t_min]
+
+  run_discovery_loop:
+    type: function
+    description: Run the full discovery loop and return structured experiment records.
+    callable: pinch_lab.omnigent_tools.tool_run_discovery_loop
+    parameters:
+      type: object
+      properties:
+        steps:
+          type: integer
+          default: 2
+      required: []

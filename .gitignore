@@ -28,6 +28,8 @@ evidence/cache/*
 !evidence/cache/.gitkeep
 results/runs/*
 !results/runs/.gitkeep
+results/science_history.jsonl
+.tmp_science/
 
 # Secrets / local notes
 *.pem

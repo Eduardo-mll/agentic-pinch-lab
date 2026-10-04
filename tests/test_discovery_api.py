@@ -14,11 +14,11 @@ def test_health():
 
 def test_discovery_run(tmp_path, monkeypatch):
     monkeypatch.setattr(
-        "omnigent.run_discovery_loop.RESULTS_DIR",
+        "pinch_lab.run_discovery_loop.RESULTS_DIR",
         tmp_path / "runs",
     )
     monkeypatch.setattr(
-        "omnigent.run_discovery_loop.HISTORY_PATH",
+        "pinch_lab.run_discovery_loop.HISTORY_PATH",
         tmp_path / "experiments.json",
     )
 

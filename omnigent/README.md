@@ -1,57 +1,47 @@
-# Omnigent (agents branch)
+# Omnigent configs (Challenge 03)
 
-## MVP agents (current slice)
+This folder contains **Omnigent YAML agents**.  
+The Python runtime lives in **`pinch_lab/`** (renamed to avoid clashing with the Omnigent package).
 
-1. **Evidence Agent** — selects approved local evidence IDs
-2. **Hypothesis Agent** — forms / refines a falsifiable idea
-3. **Experiment Planner** — proposes a `delta_t_min` experiment
-4. **Scientific Analyst** — interprets the result and chooses the next experiment
+## Agents
 
-BrightData/web retrieval can be added later for the Evidence Agent only.
+| Agent | Path |
+|---|---|
+| Coordinator | `omnigent/coordinator/` |
+| Evidence | `omnigent/agents/evidence/` |
+| Hypothesis | `omnigent/agents/hypothesis/` |
+| Planner | `omnigent/agents/planner/` |
+| Analyst | `omnigent/agents/analyst/` |
 
+## Fastest demo path
 
-## HTTP API (for frontend)
+1. Deterministic loop (no Omnigent needed):
 
-With the API running:
+```powershell
+python -m pinch_lab.run_discovery_loop
+```
 
-```bash
+2. FastAPI for frontend:
+
+```powershell
 uvicorn backend.main:app --reload
 ```
 
-- `POST /discovery/run` — run the loop (`{"steps": 2}`)
-- `GET /discovery/history` — experiment index
-- `GET /discovery/latest` — newest saved record
-- `GET /evidence` — approved local evidence list
-- `POST /evidence/validate` — reject invented evidence IDs
-- `GET /health`
-- `GET /pinch?delta_t_min=10`
+3. Omnigent + Claude coordinator:
 
-## Run the local discovery loop
+See [INSTALL.md](INSTALL.md)
 
-From the repo root (venv active):
-
-```bash
-python -m omnigent.run_discovery_loop
+```powershell
+omni run .\omnigent\coordinator\
 ```
 
-This uses a **fake experiment tool** on purpose so agents work can proceed
-before the science branch is merged.
+## Tool contract
 
-Expected proof:
+Coordinator tools (Python):
 
-```text
-Experiment #1 ΔTmin = 7.5
-Experiment #2 ΔTmin = <different value chosen from result #1>
-OK: experiment #2 differs because of result #1.
-```
+- `pinch_lab.omnigent_tools.tool_gather_evidence`
+- `pinch_lab.omnigent_tools.tool_validate_evidence_ids`
+- `pinch_lab.omnigent_tools.tool_run_experiment`
+- `pinch_lab.omnigent_tools.tool_run_discovery_loop`
 
-Results are written to:
-
-- `results/runs/RUN-XXXX.json`
-- `results/experiments.json`
-
-## Important
-
-- Do **not** edit `backend/pinch/` from this branch
-- Later swap `omnigent/tools/fake_experiment.py` for the real Pinch engine
-- Current Planner/Analyst are rule-based stubs; Omnigent + Claude can replace them later without changing the JSON contracts
+Claude reasons. These tools return the numbers.

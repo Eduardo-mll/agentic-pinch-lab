@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from omnigent.tools.evidence_store import (
+from pinch_lab.tools.evidence_store import (
     find_relevant_evidence,
     validate_evidence_ids,
 )
