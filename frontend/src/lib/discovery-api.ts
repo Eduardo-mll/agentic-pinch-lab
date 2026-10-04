@@ -37,7 +37,11 @@ export const experimentRecord = z.object({
       total_cost_per_year: z.number(),
     }).nullable().optional(),
   }).passthrough(),
-  analysis: z.object({ status: z.string(), learning: z.string() }),
+  analysis: z.object({
+    status: z.string(),
+    learning: z.string(),
+    decision_basis: z.string().optional(),
+  }),
   next_decision: z.object({ reason: z.string(), experiment: z.object({ delta_t_min: z.number() }).optional() }),
 });
 

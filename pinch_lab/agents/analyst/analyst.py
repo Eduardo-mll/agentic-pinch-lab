@@ -8,19 +8,24 @@ from pinch_lab.tools.claude_client import anthropic_enabled, claude_complete
 
 
 BASELINE_HEATING = 100.0
+BASELINE_DELTA_T_MIN = 10.0
+# Evaluated network total at ΔTmin = 10 °C. Same ground truth as the economics test.
+BASELINE_TOTAL_COST_PER_YEAR = 104828.92
 
 
 def analyze_result(
     hypothesis: dict[str, Any],
     experiment: dict[str, Any],
     result: dict[str, Any],
+    previous_result: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Interpret one experiment and choose a different next ΔTmin.
 
+    When two total costs exist, the next ΔTmin follows the cheaper one.
     Numerical support/reject decisions stay rule-based (Python > LLM).
     Claude may only rewrite the learning sentence when enabled.
     """
-    analysis = _analyze_rules(hypothesis, experiment, result)
+    analysis = _analyze_rules(hypothesis, experiment, result, previous_result)
 
     if anthropic_enabled() and result.get("status") == "VALID":
         narrated = _narrate_with_claude(hypothesis, experiment, result, analysis)
@@ -35,10 +40,31 @@ def analyze_result(
     return analysis
 
 
+def _total_cost(payload: dict[str, Any] | None) -> float | None:
+    if not payload:
+        return None
+    economics = payload.get("economics") or {}
+    value = economics.get("total_cost_per_year")
+    if value is None:
+        return None
+    return float(value)
+
+
+def _neighbor(current: float, toward_lower: bool) -> float:
+    if toward_lower:
+        nxt = max(5.0, round(current - 1.5, 1))
+    else:
+        nxt = min(30.0, round(current + 2.5, 1))
+    if nxt == current:
+        nxt = 5.0 if current > 5 else 8.0
+    return nxt
+
+
 def _analyze_rules(
     hypothesis: dict[str, Any],
     experiment: dict[str, Any],
     result: dict[str, Any],
+    previous_result: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if result.get("status") != "VALID":
         current = float(experiment["proposed_value"])
@@ -55,13 +81,35 @@ def _analyze_rules(
     heating = float(result["heating_utility_kw"])
     recovery = float(result["heat_recovery_kw"])
     current = float(result["delta_t_min"])
-    expected = experiment.get("expected_effect", "reduce_external_utility")
+    current_cost = _total_cost(result)
 
+    if current_cost is not None:
+        previous_cost = _total_cost(previous_result)
+        if previous_cost is None:
+            reference_cost = BASELINE_TOTAL_COST_PER_YEAR
+            reference_dt = BASELINE_DELTA_T_MIN
+            reference_label = "baseline"
+        else:
+            reference_cost = previous_cost
+            reference_dt = float(previous_result["delta_t_min"])
+            reference_label = "previous experiment"
+        return _decide_from_cost(
+            current=current,
+            heating=heating,
+            recovery=recovery,
+            current_cost=current_cost,
+            reference_cost=reference_cost,
+            reference_dt=reference_dt,
+            reference_label=reference_label,
+            economics=result.get("economics") or {},
+        )
+
+    expected = experiment.get("expected_effect", "reduce_external_utility")
     heating_improved = heating < BASELINE_HEATING
 
     if expected == "reduce_external_utility" and heating_improved:
         status = "SUPPORTED"
-        next_value = max(5.0, round(current - 1.5, 1))
+        next_value = _neighbor(current, toward_lower=True)
         learning = (
             f"Heating utility fell to {heating} kW (baseline {BASELINE_HEATING} kW) "
             f"and recovery rose to {recovery} kW. Hypothesis direction is supported."
@@ -72,7 +120,7 @@ def _analyze_rules(
         )
     elif expected == "reduce_external_utility" and not heating_improved:
         status = "REJECTED"
-        next_value = min(30.0, round(current + 2.5, 1))
+        next_value = _neighbor(current, toward_lower=False)
         learning = (
             f"Heating utility was {heating} kW, not below baseline {BASELINE_HEATING} kW. "
             "Lowering delta_t_min did not help in this run."
@@ -89,20 +137,104 @@ def _analyze_rules(
             f"Probe the opposite side of the baseline with delta_t_min={next_value} C."
         )
 
-    if next_value == current:
-        next_value = 5.0 if current > 5 else 8.0
+    return _decision(
+        status=status,
+        learning=learning,
+        reason=reason,
+        next_value=next_value,
+        heating=heating,
+        recovery=recovery,
+        decision_basis="heating_utility",
+    )
 
-    economics = result.get("economics") or {}
-    if economics:
-        learning += (
-            f" Network total cost ≈ ${float(economics.get('total_cost_per_year', 0)):.0f}/yr "
-            f"(equipment ${float(economics.get('equipment_cost_per_year', 0)):.0f}, "
-            f"utilities ${float(economics.get('utility_cost_per_year', 0)):.0f})."
+
+def _decide_from_cost(
+    *,
+    current: float,
+    heating: float,
+    recovery: float,
+    current_cost: float,
+    reference_cost: float,
+    reference_dt: float,
+    reference_label: str,
+    economics: dict[str, Any],
+) -> dict[str, Any]:
+    moved_down = current < reference_dt - 1e-9
+    cost_delta = current_cost - reference_cost
+    equipment = float(economics.get("equipment_cost_per_year", 0))
+    utilities = float(economics.get("utility_cost_per_year", 0))
+
+    if cost_delta < -1.0:
+        status = "SUPPORTED"
+        next_value = _neighbor(current, toward_lower=moved_down)
+        learning = (
+            f"Total network cost fell to ${current_cost:.2f}/yr from "
+            f"${reference_cost:.2f}/yr at ΔTmin {reference_dt} C ({reference_label}). "
+            f"Heating is {heating} kW and recovery is {recovery} kW. "
+            f"Equipment ${equipment:.2f}/yr, utilities ${utilities:.2f}/yr."
+        )
+        reason = (
+            f"Because total cost was lower at delta_t_min={current} C than at "
+            f"{reference_dt} C, continue that direction with {next_value} C."
+        )
+    elif cost_delta > 1.0:
+        status = "REJECTED"
+        next_value = _neighbor(current, toward_lower=not moved_down)
+        learning = (
+            f"Total network cost rose to ${current_cost:.2f}/yr from "
+            f"${reference_cost:.2f}/yr at ΔTmin {reference_dt} C ({reference_label}), "
+            f"even with heating {heating} kW and recovery {recovery} kW. "
+            f"Equipment ${equipment:.2f}/yr, utilities ${utilities:.2f}/yr. "
+            "Lower utility demand did not minimize total cost."
+        )
+        reason = (
+            f"Because total cost was higher at delta_t_min={current} C than at "
+            f"{reference_dt} C, try the other direction at {next_value} C."
+        )
+    else:
+        status = "INCONCLUSIVE"
+        next_value = _neighbor(current, toward_lower=not moved_down)
+        learning = (
+            f"Total cost ${current_cost:.2f}/yr is effectively the same as "
+            f"${reference_cost:.2f}/yr at ΔTmin {reference_dt} C."
+        )
+        reason = (
+            f"Costs match within $1/yr, so probe the other side at {next_value} C."
         )
 
-    return {
+    return _decision(
+        status=status,
+        learning=learning,
+        reason=reason,
+        next_value=next_value,
+        heating=heating,
+        recovery=recovery,
+        decision_basis="total_cost",
+        direction=(
+            "decrease_delta_t_min" if next_value < current else "increase_delta_t_min"
+        ),
+        compared_cost=reference_cost,
+        observed_cost=current_cost,
+    )
+
+
+def _decision(
+    *,
+    status: str,
+    learning: str,
+    reason: str,
+    next_value: float,
+    heating: float,
+    recovery: float,
+    decision_basis: str,
+    direction: str | None = None,
+    compared_cost: float | None = None,
+    observed_cost: float | None = None,
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {
         "status": status,
         "learning": learning,
+        "decision_basis": decision_basis,
         "compared_to_baseline_heating_kw": BASELINE_HEATING,
         "observed_heating_utility_kw": heating,
         "observed_heat_recovery_kw": recovery,
@@ -111,6 +243,12 @@ def _analyze_rules(
             "experiment": {"delta_t_min": next_value},
         },
     }
+    if direction is not None:
+        payload["direction"] = direction
+    if compared_cost is not None:
+        payload["compared_total_cost_per_year"] = compared_cost
+        payload["observed_total_cost_per_year"] = observed_cost
+    return payload
 
 
 def _narrate_with_claude(

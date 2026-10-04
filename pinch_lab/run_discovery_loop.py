@@ -115,6 +115,7 @@ def _build_record(
             "status": analysis["status"],
             "learning": analysis["learning"],
             "learning_generated_by": analysis.get("learning_generated_by"),
+            "decision_basis": analysis.get("decision_basis"),
         },
         "next_decision": analysis["next_decision"],
     }
@@ -181,7 +182,12 @@ def run_loop(steps: int = 2) -> list[dict]:
         result = run_computational_experiment(
             delta_t_min=float(experiment["proposed_value"])
         )
-        analysis = analyze_result(hypothesis, experiment, result)
+        analysis = analyze_result(
+            hypothesis,
+            experiment,
+            result,
+            previous_result=previous_result,
+        )
         record = _build_record(
             evidence_pack=evidence_pack,
             hypothesis=hypothesis,

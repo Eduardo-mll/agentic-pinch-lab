@@ -75,8 +75,20 @@ def _hypothesis_rules(
     next_dt = previous_analysis.get("next_decision", {}).get("experiment", {}).get(
         "delta_t_min"
     )
+    basis = previous_analysis.get("decision_basis")
 
-    if status == "SUPPORTED":
+    if basis == "total_cost":
+        text = (
+            "The next delta_t_min should follow the cheaper total network cost, "
+            "counting both equipment and utilities, not heating utility alone."
+            if status == "SUPPORTED"
+            else "The previous delta_t_min raised total network cost. The other direction may be cheaper even if heat recovery changes."
+            if status == "REJECTED"
+            else "Total network cost did not change enough to choose a direction; probe another delta_t_min."
+        )
+        direction = previous_analysis.get("direction") or "probe_around_baseline"
+        hyp_id = "HYP-002"
+    elif status == "SUPPORTED":
         text = (
             "Further reducing delta_t_min should continue to lower external "
             "heating utility if the previous trend is real."
@@ -134,6 +146,8 @@ def _hypothesis_with_claude(
     system = (
         "You are the Hypothesis Agent for a Pinch Analysis lab. "
         "Propose ONE falsifiable hypothesis about changing delta_t_min only. "
+        "If previous_analysis.decision_basis is total_cost, the hypothesis must "
+        "be about total network cost, not only utility demand. "
         "Never invent numerical Pinch results. "
         "Reply with compact JSON only: "
         '{"id":"HYP-001","text":"...","expected_effect":"reduce_external_utility",'
