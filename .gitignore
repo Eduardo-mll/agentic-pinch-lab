@@ -28,6 +28,7 @@ evidence/cache/*
 !evidence/cache/.gitkeep
 results/runs/*
 !results/runs/.gitkeep
+results/experiments.json
 results/science_history.jsonl
 .tmp_science/
 

@@ -22,10 +22,18 @@ The next experiment must change because of the previous numerical result.
 5. MVP controllable variable is only `delta_t_min` (range 5–30 C).
 6. Stream data (Tin, Tout, FCp, h, identities) is locked.
 
+## What this coordinator is
+
+The API **Run cycle** button executes `pinch_lab/run_discovery_loop.py`.
+That loop calls the Python modules in `pinch_lab/agents/` and the Pinch engine.
+
+This Omnigent session is separate. It does not start the four YAML agents as independent sessions.
+It calls the same Python tools directly: `gather_evidence`, `validate_evidence_ids`, `run_experiment`, and `run_discovery_loop`.
+
 ## Handoffs
 
-Follow `omnigent/policies/handoffs.yaml`.
-Do not skip an agent, and do not let one agent invent another agent's output.
+`omnigent/policies/handoffs.yaml` describes those Python roles.
+Do not invent their outputs. If you need the full sequence, call `run_discovery_loop`.
 
 ## Preferred workflow
 

@@ -29,7 +29,8 @@ def test_tool_run_experiment_and_loop(tmp_path, monkeypatch):
 
     result = tool_run_experiment(7.5)
     assert result["status"] == "VALID"
-    assert result["generated_by"] in {"SCIENCE_PINCH_ENGINE", "FAKE_EXPERIMENT"}
+    assert result["generated_by"] == "SCIENCE_PINCH_ENGINE"
+    assert result["engine"]["fallback_used"] is False
 
     payload = tool_run_discovery_loop(steps=2)
     assert payload["status"] == "ok"

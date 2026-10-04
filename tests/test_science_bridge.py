@@ -20,3 +20,27 @@ def test_science_baseline_near_known_targets():
 def test_science_rejects_out_of_range():
     result = run_computational_experiment(-5)
     assert result["status"] == "REJECTED"
+
+
+def test_science_failure_does_not_use_fake_numbers(monkeypatch):
+    def explode(delta_t_min: float):
+        raise RuntimeError(f"boom at {delta_t_min}")
+
+    monkeypatch.setattr(
+        "pinch_lab.tools.run_experiment.run_science_experiment",
+        explode,
+    )
+    result = run_computational_experiment(10.0)
+    assert result["status"] == "FAILED"
+    assert result["generated_by"] == "SCIENCE_PINCH_ENGINE"
+    assert result["heat_recovery_kw"] is None
+    assert result["engine"]["mode"] == "scientific"
+    assert result["engine"]["fallback_used"] is False
+    assert "boom" in result["message"]
+
+
+def test_simulation_mode_is_explicit():
+    result = run_computational_experiment(10.0, mode="simulation")
+    assert result["generated_by"] == "FAKE_EXPERIMENT"
+    assert result["engine"]["mode"] == "simulation"
+    assert result["engine"]["fallback_used"] is False

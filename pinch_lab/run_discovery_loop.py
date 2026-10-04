@@ -5,7 +5,7 @@ Usage (from repo root, venv active):
     python -m pinch_lab.run_discovery_loop
 
 This proves: experiment #2 changes because of result #1.
-Later: replace fake_experiment with the real Pinch engine.
+Numbers come from the science engine. Simulation is not used automatically.
 """
 
 from __future__ import annotations
