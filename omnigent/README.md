@@ -1,11 +1,26 @@
 # Omnigent (agents branch)
 
-## MVP agents (first slice)
+## MVP agents (current slice)
 
-1. **Experiment Planner** — proposes a `delta_t_min` experiment
-2. **Scientific Analyst** — interprets the result and chooses the next experiment
+1. **Hypothesis Agent** — forms / refines a falsifiable idea
+2. **Experiment Planner** — proposes a `delta_t_min` experiment
+3. **Scientific Analyst** — interprets the result and chooses the next experiment
 
-Evidence Agent and Hypothesis Agent come after this loop works.
+Evidence Agent comes next (local cache first; BrightData later).
+
+## HTTP API (for frontend)
+
+With the API running:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+- `POST /discovery/run` — run the loop (`{"steps": 2}`)
+- `GET /discovery/history` — experiment index
+- `GET /discovery/latest` — newest saved record
+- `GET /health`
+- `GET /pinch?delta_t_min=10`
 
 ## Run the local discovery loop
 

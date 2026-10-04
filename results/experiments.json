@@ -41,6 +41,22 @@
       "delta_t_min": 6.0,
       "analysis_status": "SUPPORTED",
       "path": "results/runs/RUN-3731E796.json"
+    },
+    {
+      "run_id": "RUN-BECFEEF2",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "path": "results/runs/RUN-BECFEEF2.json"
+    },
+    {
+      "run_id": "RUN-2D448135",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-002",
+      "path": "results/runs/RUN-2D448135.json"
     }
   ],
   "notes": "Updated by omnigent/run_discovery_loop.py"

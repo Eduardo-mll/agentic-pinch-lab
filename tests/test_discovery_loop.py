@@ -19,6 +19,10 @@ def test_second_experiment_changes_because_of_first_result(tmp_path, monkeypatch
     second_dt = records[1]["experiment"]["proposed_value"]
     assert first_dt != second_dt
 
+    # Hypothesis is refined after the first analysis.
+    assert records[0]["hypothesis"]["id"] == "HYP-001"
+    assert records[1]["hypothesis"]["id"] == "HYP-002"
+
     # Second experiment must come from analyst next_decision of the first.
     assert second_dt == records[0]["next_decision"]["experiment"]["delta_t_min"]
     assert records[0]["result"]["generated_by"] == "FAKE_EXPERIMENT"

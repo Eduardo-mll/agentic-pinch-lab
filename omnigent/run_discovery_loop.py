@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from omnigent.agents.analyst import analyze_result
+from omnigent.agents.hypothesis import formulate_hypothesis
 from omnigent.agents.planner import propose_experiment
 from omnigent.tools import fake_experiment
 
@@ -23,19 +24,9 @@ RESULTS_DIR = ROOT / "results" / "runs"
 HISTORY_PATH = ROOT / "results" / "experiments.json"
 
 QUESTION = (
-    "Can lowering ΔTmin reduce external utility demand while respecting "
+    "Can lowering delta_t_min reduce external utility demand while respecting "
     "Pinch Analysis constraints?"
 )
-
-HYPOTHESIS = {
-    "id": "HYP-001",
-    "text": (
-        "Reducing ΔTmin from 10 °C toward lower values may increase heat "
-        "recovery and reduce external utilities."
-    ),
-    "status": "UNTESTED",
-    "evidence_ids": [],
-}
 
 
 def _utc_now() -> str:
@@ -58,6 +49,8 @@ def _build_record(
             "id": hypothesis["id"],
             "text": hypothesis["text"],
             "status": "TESTED",
+            "expected_effect": hypothesis.get("expected_effect"),
+            "direction": hypothesis.get("direction"),
         },
         "experiment": {
             "experiment_id": experiment["experiment_id"],
@@ -110,6 +103,7 @@ def _save_record(record: dict) -> Path:
             "experiment_id": record["experiment"]["experiment_id"],
             "delta_t_min": record["experiment"]["proposed_value"],
             "analysis_status": record["analysis"]["status"],
+            "hypothesis_id": record["hypothesis"]["id"],
             "path": rel_path,
         }
     )
@@ -121,18 +115,23 @@ def _save_record(record: dict) -> Path:
 def run_loop(steps: int = 2) -> list[dict]:
     records: list[dict] = []
     previous_result: dict | None = None
+    previous_analysis: dict | None = None
     preferred_next: float | None = None
 
     for _ in range(steps):
+        hypothesis = formulate_hypothesis(
+            question=QUESTION,
+            previous_analysis=previous_analysis,
+        )
         experiment = propose_experiment(
-            hypothesis=HYPOTHESIS,
+            hypothesis=hypothesis,
             previous_result=previous_result,
             preferred_delta_t_min=preferred_next,
         )
         result = fake_experiment(delta_t_min=float(experiment["proposed_value"]))
-        analysis = analyze_result(HYPOTHESIS, experiment, result)
+        analysis = analyze_result(hypothesis, experiment, result)
         record = _build_record(
-            hypothesis=HYPOTHESIS,
+            hypothesis=hypothesis,
             experiment=experiment,
             result=result,
             analysis=analysis,
@@ -142,6 +141,7 @@ def run_loop(steps: int = 2) -> list[dict]:
         records.append(record)
 
         previous_result = result
+        previous_analysis = analysis
         preferred_next = float(analysis["next_decision"]["experiment"]["delta_t_min"])
 
     return records
@@ -153,6 +153,8 @@ def main() -> None:
     second = records[1]["experiment"]["proposed_value"]
 
     print("Discovery loop complete.")
+    print(f"Hypothesis #1 = {records[0]['hypothesis']['id']}")
+    print(f"Hypothesis #2 = {records[1]['hypothesis']['id']}")
     print(f"Experiment #1 delta_t_min = {first}")
     print(f"Experiment #2 delta_t_min = {second}")
     print(f"Analysis #1 = {records[0]['analysis']['status']}")
