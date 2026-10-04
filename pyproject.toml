@@ -23,7 +23,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["backend*"]
+include = ["backend*", "omnigent*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

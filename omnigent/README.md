@@ -1,21 +1,38 @@
-# Omnigent (ITC 2)
+# Omnigent (agents branch)
 
-This folder will hold the Omnigent coordinator, agents, tools and policies.
+## MVP agents (first slice)
 
-Planned MVP agents:
+1. **Experiment Planner** — proposes a `delta_t_min` experiment
+2. **Scientific Analyst** — interprets the result and chooses the next experiment
 
-1. Evidence Agent
-2. Hypothesis Agent
-3. Experiment Planner
-4. Scientific Analyst
+Evidence Agent and Hypothesis Agent come after this loop works.
 
-Do **not** make the Pinch engine an LLM agent.
-Python calculates; agents interpret.
+## Run the local discovery loop
 
-Suggested first milestone for ITC 2:
+From the repo root (venv active):
 
-```text
-Agent → tool → result → changed next decision
+```bash
+python -m omnigent.run_discovery_loop
 ```
 
-A temporary fake experiment is fine until the real Pinch engine is ready.
+This uses a **fake experiment tool** on purpose so agents work can proceed
+before the science branch is merged.
+
+Expected proof:
+
+```text
+Experiment #1 ΔTmin = 7.5
+Experiment #2 ΔTmin = <different value chosen from result #1>
+OK: experiment #2 differs because of result #1.
+```
+
+Results are written to:
+
+- `results/runs/RUN-XXXX.json`
+- `results/experiments.json`
+
+## Important
+
+- Do **not** edit `backend/pinch/` from this branch
+- Later swap `omnigent/tools/fake_experiment.py` for the real Pinch engine
+- Current Planner/Analyst are rule-based stubs; Omnigent + Claude can replace them later without changing the JSON contracts

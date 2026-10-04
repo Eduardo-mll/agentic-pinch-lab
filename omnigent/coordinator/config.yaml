@@ -1,0 +1,12 @@
+name: pinch_lab_coordinator
+workflow:
+  - hypothesis
+  - planner
+  - experiment_tool
+  - analyst
+  - next_experiment
+agents:
+  - planner
+  - analyst
+tools:
+  - fake_experiment

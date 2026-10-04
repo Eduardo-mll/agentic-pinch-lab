@@ -1,4 +1,47 @@
 {
-  "experiments": [],
-  "notes": "Completed experiment records will be appended here."
+  "experiments": [
+    {
+      "run_id": "RUN-C1D210FF",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "path": "results/runs/RUN-C1D210FF.json"
+    },
+    {
+      "run_id": "RUN-B02F9DB8",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "path": "results/runs/RUN-B02F9DB8.json"
+    },
+    {
+      "run_id": "RUN-71F22EC2",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "path": "results/runs/RUN-71F22EC2.json"
+    },
+    {
+      "run_id": "RUN-70CA154F",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "path": "results/runs/RUN-70CA154F.json"
+    },
+    {
+      "run_id": "RUN-AAF65E4C",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "path": "results/runs/RUN-AAF65E4C.json"
+    },
+    {
+      "run_id": "RUN-3731E796",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "path": "results/runs/RUN-3731E796.json"
+    }
+  ],
+  "notes": "Updated by omnigent/run_discovery_loop.py"
 }

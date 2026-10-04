@@ -1,0 +1,7 @@
+name: experiment_planner
+role: Propose one testable ΔTmin experiment for the current hypothesis.
+tools: []
+permissions:
+  may_retrieve_web: false
+  may_run_pinch: false
+  may_propose_experiment: true
