@@ -1,4 +1,4 @@
-"""Hypothesis agent: Claude Haiku when enabled, else deterministic rules."""
+"""Hypothesis agent: Claude Sonnet when enabled, else deterministic rules."""
 
 from __future__ import annotations
 

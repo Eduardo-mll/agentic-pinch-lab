@@ -1,4 +1,4 @@
-"""Optional Anthropic Claude helper (Haiku by default = cheaper)."""
+"""Optional Anthropic Claude helper (Sonnet by default)."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import urllib.request
 from typing import Any
 
 
-DEFAULT_MODEL = "claude-haiku-4-5"
+DEFAULT_MODEL = "claude-sonnet-4-6"
 
 
 def anthropic_enabled() -> bool:

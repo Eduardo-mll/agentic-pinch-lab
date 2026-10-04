@@ -1,4 +1,4 @@
-# Install Omnigent + Claude Haiku + Bright Data (Windows)
+# Install Omnigent + Claude Sonnet + Bright Data (Windows)
 
 Our Python package is named **`pinch_lab`** on purpose.  
 The top-level **`omnigent/`** folder holds Omnigent YAML agents only.
@@ -26,7 +26,7 @@ Copy `.env.example` → `.env` and set:
 ```text
 USE_CLAUDE=1
 ANTHROPIC_API_KEY=sk-ant-...
-ANTHROPIC_MODEL=claude-haiku-4-5
+ANTHROPIC_MODEL=claude-sonnet-4-6
 
 USE_BRIGHTDATA=1
 BRIGHTDATA_API_KEY=...
@@ -36,7 +36,7 @@ BRIGHTDATA_ZONE=pinch_lab_serp
 Notes:
 - **No spaces** around `=`
 - The API key cannot create a zone. In Bright Data, add a **SERP API** zone named `pinch_lab_serp`.
-- We use **Claude Haiku 4.5** (cheaper) instead of Sonnet
+- We use **Claude Sonnet 4.6**. It is one step above Haiku. The short id `claude-sonnet-4-5` is not available on this API key.
 
 Also export for Omnigent in the current shell:
 
@@ -55,14 +55,14 @@ uvicorn backend.main:app --reload --port 8000
 
 `Run cycle` in the UI will:
 1. gather evidence (local + Bright Data SERP)
-2. form hypothesis (Claude Haiku when enabled)
+2. form hypothesis (Claude Sonnet when enabled)
 3. run Pinch + area/cost in Python
-4. narrate learning with Claude Haiku (numbers still from Python)
+4. narrate learning with Claude Sonnet (numbers still from Python)
 
 ## 5. Omnigent coordinator (optional live agent)
 
 ```powershell
-omni run .\omnigent\coordinator\ --harness claude-sdk --model claude-haiku-4-5
+omni run .\omnigent\coordinator\ --harness claude-sdk --model claude-sonnet-4-6
 ```
 
 Ask something like:

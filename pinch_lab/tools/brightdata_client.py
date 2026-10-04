@@ -117,9 +117,11 @@ def search_google_serp(
         }
     zone = resolved_zone["zone"]
 
+    # Bright Data rejects Google's `num` parameter and the request then dies
+    # on a captcha redirect. Ask for the default result page instead.
     url = (
         "https://www.google.com/search?"
-        f"q={quote_plus(query)}&hl=en&gl=us&num={max(1, min(limit, 10))}"
+        f"q={quote_plus(query)}&hl=en&gl=us"
     )
     payload = {
         "zone": zone,
@@ -182,6 +184,23 @@ def search_google_serp(
             "results": [],
             "message": "Bright Data returned non-JSON content.",
             "raw_preview": raw[:300],
+        }
+
+    inner_status = parsed.get("status_code") if isinstance(parsed, dict) else None
+    headers = parsed.get("headers") if isinstance(parsed, dict) else None
+    error_code = ""
+    if isinstance(headers, dict):
+        error_code = str(headers.get("x-brd-error-code") or headers.get("x-brd-error") or "")
+    if (isinstance(inner_status, int) and inner_status >= 400) or error_code:
+        return {
+            "status": "ERROR",
+            "query": query,
+            "zone": zone,
+            "results": [],
+            "message": (
+                f"Bright Data SERP failed ({inner_status or 'error'}"
+                f"{': ' + error_code if error_code else ''})."
+            ),
         }
 
     organic = _extract_organic(parsed)[:limit]
