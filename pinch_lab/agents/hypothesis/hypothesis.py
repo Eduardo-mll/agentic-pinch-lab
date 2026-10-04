@@ -146,8 +146,9 @@ def _hypothesis_with_claude(
     system = (
         "You are the Hypothesis Agent for a Pinch Analysis lab. "
         "Propose ONE falsifiable hypothesis about changing delta_t_min only. "
-        "If previous_analysis.decision_basis is total_cost, the hypothesis must "
-        "be about total network cost, not only utility demand. "
+        "The hypothesis must describe only the value in suggested_delta_t_min. "
+        "Do not mention a later untested delta_t_min. "
+        "The only baseline is 10 C. "
         "Never invent numerical Pinch results. "
         "Reply with compact JSON only: "
         '{"id":"HYP-001","text":"...","expected_effect":"reduce_external_utility",'

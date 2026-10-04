@@ -53,7 +53,7 @@ def test_baseline_network_economics_ground_truth():
         92878.92, abs=1.0
     )
     assert econ["economics"]["total_cost_per_year"] == pytest.approx(
-        104828.92, abs=1.0
+        104828.3995, abs=0.01
     )
 
 
@@ -64,7 +64,7 @@ def test_science_bridge_includes_area_and_cost():
     assert result["network"]["number_of_exchangers"] == 6
     assert result["network"]["total_area_m2"] > 0
     assert result["economics"]["total_cost_per_year"] == pytest.approx(
-        104828.92, abs=1.0
+        104828.3995, abs=0.01
     )
     assert result["energy"]["heat_recovery_kw"] == 490
 

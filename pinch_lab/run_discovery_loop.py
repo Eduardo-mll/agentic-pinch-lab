@@ -179,6 +179,17 @@ def run_loop(steps: int = 2) -> list[dict]:
             previous_result=previous_result,
             preferred_delta_t_min=preferred_next,
         )
+        tested = float(experiment["proposed_value"])
+        if previous_result is None:
+            reference = "the 10 C baseline"
+        else:
+            reference = f"the previous experiment at {float(previous_result['delta_t_min']):g} C"
+        hypothesis["text"] = (
+            f"Testing whether delta_t_min = {tested:g} C lowers total network cost "
+            f"relative to {reference}."
+        )
+        hypothesis["generated_by"] = "RULES"
+        hypothesis["tested_delta_t_min"] = tested
         result = run_computational_experiment(
             delta_t_min=float(experiment["proposed_value"])
         )

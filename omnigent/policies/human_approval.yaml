@@ -1,0 +1,21 @@
+# Human approval gate
+# Scientists approve consequential science changes.
+# The Python gate in src/human_gate.py enforces this. This file does not.
+
+approved_without_extra_flag:
+  - name: delta_t_min
+    min: 5
+    max: 30
+    unit: C
+    source: scientific/variables.json
+
+requires_scientist_approval:
+  - stream_identity
+  - supply_temp
+  - target_temp
+  - fcp
+  - h
+  - delta_t_min outside 5-30 C
+
+if_not_approved: NEEDS_HUMAN_APPROVAL
+stream_edits_in_this_mvp: rejected even after approval

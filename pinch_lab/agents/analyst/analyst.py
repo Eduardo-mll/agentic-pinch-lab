@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from pinch_lab.tools.claude_client import anthropic_enabled, claude_complete
@@ -9,8 +10,8 @@ from pinch_lab.tools.claude_client import anthropic_enabled, claude_complete
 
 BASELINE_HEATING = 100.0
 BASELINE_DELTA_T_MIN = 10.0
-# Evaluated network total at ΔTmin = 10 °C. Same ground truth as the economics test.
-BASELINE_TOTAL_COST_PER_YEAR = 104828.92
+# Engine total at ΔTmin = 10 °C. Same figure the cost model returns, not a second rounded copy.
+BASELINE_TOTAL_COST_PER_YEAR = 104828.3995
 
 
 def analyze_result(
@@ -96,6 +97,7 @@ def _analyze_rules(
         return _decide_from_cost(
             current=current,
             heating=heating,
+            cooling=float(result.get("cooling_utility_kw") or 0),
             recovery=recovery,
             current_cost=current_cost,
             reference_cost=reference_cost,
@@ -152,6 +154,7 @@ def _decide_from_cost(
     *,
     current: float,
     heating: float,
+    cooling: float,
     recovery: float,
     current_cost: float,
     reference_cost: float,
@@ -163,6 +166,17 @@ def _decide_from_cost(
     cost_delta = current_cost - reference_cost
     equipment = float(economics.get("equipment_cost_per_year", 0))
     utilities = float(economics.get("utility_cost_per_year", 0))
+    network_heating = economics.get("network_heating_kw")
+    network_cooling = economics.get("network_cooling_kw")
+    network_note = ""
+    if network_heating is not None and network_cooling is not None:
+        if abs(float(network_heating) - heating) > 0.05 or abs(float(network_cooling) - cooling) > 0.05:
+            network_note = (
+                f" Pinch targets are heating {heating:g} kW and cooling {cooling:g} kW. "
+                f"This network actually requires heating {float(network_heating):.2f} kW "
+                f"and cooling {float(network_cooling):.2f} kW, and those loads set the utility cost "
+                f"(${utilities:.2f}/yr), so equipment plus utilities is ${current_cost:.2f}/yr."
+            )
 
     if cost_delta < -1.0:
         status = "SUPPORTED"
@@ -172,6 +186,7 @@ def _decide_from_cost(
             f"${reference_cost:.2f}/yr at ΔTmin {reference_dt} C ({reference_label}). "
             f"Heating is {heating} kW and recovery is {recovery} kW. "
             f"Equipment ${equipment:.2f}/yr, utilities ${utilities:.2f}/yr."
+            f"{network_note}"
         )
         reason = (
             f"Because total cost was lower at delta_t_min={current} C than at "
@@ -186,6 +201,7 @@ def _decide_from_cost(
             f"even with heating {heating} kW and recovery {recovery} kW. "
             f"Equipment ${equipment:.2f}/yr, utilities ${utilities:.2f}/yr. "
             "Lower utility demand did not minimize total cost."
+            f"{network_note}"
         )
         reason = (
             f"Because total cost was higher at delta_t_min={current} C than at "
@@ -260,6 +276,9 @@ def _narrate_with_claude(
     system = (
         "You are the Analyst Agent. Rewrite the learning sentence in 1-2 concise "
         "English sentences. Keep every number exactly as provided. "
+        "The only baseline is delta_t_min = 10 C. "
+        "Call every other value a previous experiment, never baseline. "
+        "Do not describe an untested next delta_t_min as if it already ran. "
         "Do not invent new values. Do not change the support/reject status."
     )
     user = (
@@ -276,4 +295,8 @@ def _narrate_with_claude(
     if response.get("status") != "OK":
         return None
     text = str(response.get("text") or "").strip()
+    tested = float(result.get("delta_t_min") or 0)
+    if "baseline" in text.lower() and abs(tested - BASELINE_DELTA_T_MIN) > 0.05:
+        if not re.search(r"\b10(?:\.0+)?\b", text):
+            return None
     return text or None

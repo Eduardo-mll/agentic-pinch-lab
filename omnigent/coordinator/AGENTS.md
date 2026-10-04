@@ -21,6 +21,8 @@ The next experiment must change because of the previous numerical result.
 4. If a tool result conflicts with your guess, the tool wins.
 5. MVP controllable variable is only `delta_t_min` (range 5–30 C).
 6. Stream data (Tin, Tout, FCp, h, identities) is locked.
+   Changing streams or the 5–30 C range requires scientist approval.
+   `src/human_gate.py` rejects those requests. See `omnigent/policies/human_approval.yaml`.
 
 ## What this coordinator is
 

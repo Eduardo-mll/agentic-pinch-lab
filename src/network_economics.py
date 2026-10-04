@@ -305,6 +305,8 @@ def evaluate_network_economics(
             "total_cost_per_year": round(
                 economics["total_cost_per_year"], 4
             ),
+            "network_heating_kw": round(float(network["heating_required_kw"]), 4),
+            "network_cooling_kw": round(float(network["cooling_required_kw"]), 4),
         },
     }
 

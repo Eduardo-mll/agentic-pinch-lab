@@ -43,7 +43,10 @@ def run_science_experiment(delta_t_min: float) -> dict[str, Any]:
             "generated_by": "SCIENCE_PINCH_ENGINE",
             "run_id": run_id,
             "delta_t_min": float(delta_t_min),
-            "message": "REJECTED: OUT_OF_RANGE (allowed 5-30 C)",
+            "message": (
+                "REJECTED: OUT_OF_RANGE (allowed 5-30 C). "
+                "Changing that range requires human approval."
+            ),
             "heat_recovery_kw": None,
             "heating_utility_kw": None,
             "cooling_utility_kw": None,

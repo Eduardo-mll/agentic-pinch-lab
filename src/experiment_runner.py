@@ -94,6 +94,15 @@ def run_experiment(
             )
         )
 
+        from src.human_gate import approval_error
+
+        blocked = approval_error({
+            **parameters,
+            "delta_t_min": delta_t_min,
+        })
+        if blocked:
+            raise ValueError(blocked)
+
         pinch_result = (
             run_pinch_analysis(
                 streams=streams,

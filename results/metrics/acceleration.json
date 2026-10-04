@@ -1,6 +1,32 @@
 {
+  "bottleneck": "Choosing the next delta_t_min after each Pinch result",
+  "measured_at": "2026-10-04T09:01:17.432592+00:00",
+  "mode": "deterministic_python_discovery_loop",
+  "claude_enabled": false,
+  "brightdata_enabled": false,
+  "steps": 2,
+  "cycle_seconds": 0.039,
+  "experiments": [
+    {
+      "run_id": "RUN-0603F8B4",
+      "delta_t_min": 7.5,
+      "analysis_status": "REJECTED",
+      "decision_basis": "total_cost",
+      "total_cost_per_year": 118948.8559,
+      "generated_by": "SCIENCE_PINCH_ENGINE"
+    },
+    {
+      "run_id": "RUN-FAF3DFBE",
+      "delta_t_min": 10.0,
+      "analysis_status": "SUPPORTED",
+      "decision_basis": "total_cost",
+      "total_cost_per_year": 104828.3995,
+      "generated_by": "SCIENCE_PINCH_ENGINE"
+    }
+  ],
+  "second_delta_t_min_changed": true,
   "manual_candidates_per_hour": null,
   "agentic_candidates_per_hour": null,
   "speedup": null,
-  "notes": "Do not claim a multiplier before measuring it."
+  "notes": "Wall-clock time of one 2-step Python discovery cycle. Claude and Bright Data were off so the number is the local science loop. No speedup is claimed because a manual baseline was not timed."
 }

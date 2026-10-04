@@ -17,7 +17,7 @@ export const experimentRecord = z.object({
   question: z.string().optional(),
   evidence_ids: z.array(z.string()).optional(),
   evidence: z.object({ status: z.string(), message: z.string().optional(), items: z.array(evidenceItem) }).optional(),
-  hypothesis: z.object({ id: z.string(), text: z.string(), status: z.string(), expected_effect: z.string().optional(), direction: z.string().optional() }),
+  hypothesis: z.object({ id: z.string(), text: z.string(), status: z.string(), expected_effect: z.string().optional(), direction: z.string().optional(), generated_by: z.string().optional() }),
   experiment: z.object({ experiment_id: z.string(), variable: z.string(), baseline_value: z.number(), proposed_value: z.number(), expected_effect: z.string().optional(), reason: z.string().optional() }),
   validation: z.object({ status: z.string() }),
   result: z.object({
@@ -35,12 +35,15 @@ export const experimentRecord = z.object({
       equipment_cost_per_year: z.number(),
       utility_cost_per_year: z.number(),
       total_cost_per_year: z.number(),
+      network_heating_kw: z.number().optional(),
+      network_cooling_kw: z.number().optional(),
     }).nullable().optional(),
   }).passthrough(),
   analysis: z.object({
     status: z.string(),
     learning: z.string(),
     decision_basis: z.string().optional(),
+    learning_generated_by: z.string().optional(),
   }),
   next_decision: z.object({ reason: z.string(), experiment: z.object({ delta_t_min: z.number() }).optional() }),
 });
@@ -56,6 +59,35 @@ const historyResponse = z.object({ experiments: z.array(z.object({
 })) });
 const evidenceResponse = z.object({ status: z.string(), count: z.number(), evidence: z.array(evidenceItem) });
 
+const measuredExperiment = z.object({
+  run_id: z.string().optional(),
+  delta_t_min: z.number(),
+  analysis_status: z.string().optional(),
+  decision_basis: z.string().optional(),
+  total_cost_per_year: z.number().nullable().optional(),
+  generated_by: z.string().optional(),
+});
+
+export const labStatusResponse = z.object({
+  status: z.string(),
+  human_approval: z.object({
+    delta_t_min_min_c: z.number(),
+    delta_t_min_max_c: z.number(),
+    locked: z.array(z.string()),
+    message: z.string(),
+  }),
+  measurement: z.object({
+    bottleneck: z.string(),
+    cycle_seconds: z.number(),
+    steps: z.number(),
+    second_delta_t_min_changed: z.boolean(),
+    speedup: z.number().nullable(),
+    notes: z.string(),
+    experiments: z.array(measuredExperiment),
+  }).nullable(),
+});
+
+export type LabStatus = z.infer<typeof labStatusResponse>;
 export type ExperimentRecord = z.infer<typeof experimentRecord>;
 export type DiscoveryRun = z.infer<typeof discoveryRun>;
 export type EvidenceItem = z.infer<typeof evidenceItem>;
@@ -91,4 +123,31 @@ export const discoveryApi = {
   history: () => request("/discovery/history", historyResponse),
   evidence: () => request("/evidence", evidenceResponse),
   pinch: (deltaTmin: number) => request(`/pinch?delta_t_min=${encodeURIComponent(deltaTmin)}`, z.unknown()),
+  labStatus: () => request("/lab/status", labStatusResponse),
+  savedRuns: async () => {
+    const raw = await request("/discovery/records", z.object({ status: z.string(), experiments: z.array(z.unknown()) }));
+    return {
+      status: raw.status,
+      experiments: raw.experiments.flatMap(item => {
+        const parsed = experimentRecord.safeParse(item);
+        return parsed.success ? [parsed.data] : [];
+      }),
+    };
+  },
+  clearRuns: () => request("/discovery/clear", z.object({ status: z.string(), removed_runs: z.number() }), { method: "POST" }),
 };
+
+export function runsToDiscovery(experiments: ExperimentRecord[]): DiscoveryRun {
+  const previous = experiments.at(-2) ?? experiments[0];
+  const latest = experiments.at(-1) ?? experiments[0];
+  return {
+    status: "ok",
+    steps: experiments.length,
+    experiments,
+    agentic_proof: {
+      first_delta_t_min: previous?.experiment.proposed_value ?? 0,
+      second_delta_t_min: latest?.experiment.proposed_value ?? 0,
+      second_changed: previous?.experiment.proposed_value !== latest?.experiment.proposed_value,
+    },
+  };
+}

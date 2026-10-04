@@ -28,4 +28,12 @@ def test_second_experiment_changes_because_of_first_result(tmp_path, monkeypatch
     # Second experiment must come from analyst next_decision of the first.
     assert second_dt == records[0]["next_decision"]["experiment"]["delta_t_min"]
     assert records[0]["result"]["generated_by"] == "SCIENCE_PINCH_ENGINE"
-    assert records[0]["analysis"]["status"] in {"SUPPORTED", "REJECTED", "INCONCLUSIVE"}
+    assert records[0]["analysis"]["status"] == "REJECTED"
+    assert records[0]["experiment"]["proposed_value"] == 7.5
+    assert "7.5" in records[0]["hypothesis"]["text"]
+    assert records[1]["experiment"]["proposed_value"] == 10
+    assert "10" in records[1]["hypothesis"]["text"]
+    assert "12.5" not in records[1]["hypothesis"]["text"]
+    assert records[1]["analysis"]["status"] == "SUPPORTED"
+    assert records[1]["next_decision"]["experiment"]["delta_t_min"] == 12.5
+    assert records[1]["hypothesis"]["generated_by"] == "RULES"
