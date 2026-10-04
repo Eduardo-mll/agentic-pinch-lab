@@ -203,6 +203,84 @@
         "EVID-003"
       ],
       "path": "results/runs/RUN-A95F46F3.json"
+    },
+    {
+      "run_id": "RUN-CF73B468",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-CF73B468.json"
+    },
+    {
+      "run_id": "RUN-2B392718",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-002",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-2B392718.json"
+    },
+    {
+      "run_id": "RUN-C5B43E66",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-C5B43E66.json"
+    },
+    {
+      "run_id": "RUN-90CAD412",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-002",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-90CAD412.json"
+    },
+    {
+      "run_id": "RUN-2723A1DE",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-2723A1DE.json"
+    },
+    {
+      "run_id": "RUN-7B6E796F",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-002",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-7B6E796F.json"
     }
   ],
   "notes": "Updated by pinch_lab/run_discovery_loop.py"

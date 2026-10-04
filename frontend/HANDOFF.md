@@ -1,19 +1,20 @@
 # Frontend handoff — Agentic Pinch Lab
 
-This is what the frontend should use from the agents/API track.
+Technical contract for merge/integration with the backend + discovery loop.
 
-## Branch / ownership
+## Git / ownership
 
 | You own | Do not edit |
 |---|---|
-| `frontend/` | `omnigent/`, `backend/pinch/`, `scientific/` |
+| `frontend/` | `omnigent/`, `pinch_lab/`, `src/`, `scientific/` (except by agreement) |
 
-Work on branch **`frontend`**.  
-API glue lives on **`agents`**. Integration branch is **`master`**.
+- Work on branch **`frontend`**
+- Integrate against **`master`** (backend/API already merged there)
+- Pull latest `master` before wiring the API
 
 ## Product goal (not a chatbot)
 
-Show the scientific loop clearly:
+Show the scientific loop:
 
 1. Evidence  
 2. Hypothesis  
@@ -24,7 +25,14 @@ Show the scientific loop clearly:
 
 Judges must see that **experiment #2 changed because of result #1**.
 
-## Baseline to display
+## Chemistry context (for UI copy)
+
+- Domain: Pinch Analysis / Heat Exchanger Network energy integration  
+- Case: sulfuric-acid process benchmark (4 streams: H1, H2, C1, C2)  
+- MVP variable: only `delta_t_min`  
+- Goal: reduce external heating/cooling utilities by recovering process heat  
+
+### Baseline card (always show)
 
 | Metric | Value |
 |---|---:|
@@ -35,9 +43,9 @@ Judges must see that **experiment #2 changed because of result #1**.
 | Heating utility | 100 kW |
 | Cooling utility | 95 kW |
 
-## How to run the API (local)
+## Run the API locally
 
-Ask the agents teammate to run, or run yourself from repo root:
+From repo root:
 
 ```powershell
 cd C:\Users\troni\Desktop\Hackaton\agentic-pinch-lab
@@ -45,16 +53,22 @@ cd C:\Users\troni\Desktop\Hackaton\agentic-pinch-lab
 uvicorn backend.main:app --reload
 ```
 
-- API docs: http://127.0.0.1:8000/docs  
-- Health: http://127.0.0.1:8000/health  
+- Base URL: `http://127.0.0.1:8000`
+- Swagger docs: `http://127.0.0.1:8000/docs`
+- Health: `GET /health` → `{ "status": "ok" }`
+- CORS: open (`*`) for local hackathon use
 
-CORS is open (`*`) for local hackathon use.
+Suggested frontend env:
 
-## Endpoints you should use
+```text
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
 
-### 1) Run the discovery loop (main button)
+## Endpoints (integration contract)
 
-`POST http://127.0.0.1:8000/discovery/run`
+### 1) Main action — run discovery
+
+`POST /discovery/run`
 
 Body:
 
@@ -62,42 +76,102 @@ Body:
 { "steps": 2 }
 ```
 
-Returns:
-
-- `experiments`: array of full experiment records
-- `agentic_proof.second_changed`: should be `true`
-
-### 2) Latest saved experiment
-
-`GET http://127.0.0.1:8000/discovery/latest`
-
-### 3) History index
-
-`GET http://127.0.0.1:8000/discovery/history`
-
-### 4) Evidence list
-
-`GET http://127.0.0.1:8000/evidence`
-
-Use this to render the Evidence section (`evidence_id`, title, claim, confidence).
-
-### 5) Optional Pinch endpoint
-
-`GET http://127.0.0.1:8000/pinch?delta_t_min=10`
-
-## Experiment record shape (render this)
-
-Each item in `experiments[]` looks like:
+Response (shape):
 
 ```json
 {
-  "run_id": "RUN-19A79FA8",
+  "status": "ok",
+  "steps": 2,
+  "experiments": [ /* ExperimentRecord[] */ ],
+  "agentic_proof": {
+    "first_delta_t_min": 7.5,
+    "second_delta_t_min": 6.0,
+    "second_changed": true
+  }
+}
+```
+
+Use `agentic_proof.second_changed` as a clear YES/NO badge in the UI.
+
+### 2) Latest saved experiment
+
+`GET /discovery/latest`
+
+```json
+{ "status": "ok", "record": { /* ExperimentRecord */ } }
+```
+
+### 3) History index
+
+`GET /discovery/history`
+
+```json
+{
+  "experiments": [
+    {
+      "run_id": "RUN-...",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "evidence_ids": ["EVID-001", "EVID-002", "EVID-003"],
+      "path": "results/runs/RUN-....json"
+    }
+  ]
+}
+```
+
+### 4) Evidence list
+
+`GET /evidence`
+
+```json
+{
+  "status": "ok",
+  "count": 3,
+  "evidence": [
+    {
+      "evidence_id": "EVID-001",
+      "title": "...",
+      "source_type": "process_baseline",
+      "claim_supported": "...",
+      "confidence": "high",
+      "approved": true
+    }
+  ]
+}
+```
+
+### 5) Optional direct Pinch call
+
+`GET /pinch?delta_t_min=10`
+
+Useful for a baseline calculator widget; main demo should use `/discovery/run`.
+
+## ExperimentRecord fields to render
+
+```json
+{
+  "run_id": "RUN-...",
   "timestamp": "2026-10-04T01:34:57.388460+00:00",
-  "question": "Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints?",
-  "evidence_ids": [],
+  "question": "Can lowering delta_t_min reduce external utility demand ...?",
+  "evidence_ids": ["EVID-001", "EVID-002", "EVID-003"],
+  "evidence": {
+    "status": "OK",
+    "message": "Selected 3 approved local evidence record(s).",
+    "items": [
+      {
+        "evidence_id": "EVID-001",
+        "title": "...",
+        "source_type": "process_baseline",
+        "claim_supported": "...",
+        "confidence": "high"
+      }
+    ]
+  },
   "hypothesis": {
     "id": "HYP-001",
-    "text": "Reducing delta_t_min from 10 C toward lower values may increase heat recovery and reduce external utility demand.",
+    "text": "...",
     "status": "TESTED",
     "expected_effect": "reduce_external_utility",
     "direction": "decrease_delta_t_min"
@@ -108,67 +182,75 @@ Each item in `experiments[]` looks like:
     "baseline_value": 10.0,
     "proposed_value": 7.5,
     "expected_effect": "reduce_external_utility",
-    "reason": "First test: lower delta_t_min below baseline..."
+    "reason": "..."
   },
   "validation": { "status": "PASS" },
   "result": {
-    "generated_by": "FAKE_EXPERIMENT",
+    "generated_by": "SCIENCE_PINCH_ENGINE",
     "status": "VALID",
     "delta_t_min": 7.5,
-    "heat_recovery_kw": 495.0,
-    "heating_utility_kw": 96.25,
-    "cooling_utility_kw": 91.5,
-    "hot_pinch_c": 81.25,
-    "cold_pinch_c": 71.25,
-    "message": "Fake sensitivity result for agent-loop testing..."
+    "heat_recovery_kw": 502.5,
+    "heating_utility_kw": 87.5,
+    "cooling_utility_kw": 82.5,
+    "hot_pinch_c": 77.5,
+    "cold_pinch_c": 70.0,
+    "message": "Result from science-branch Pinch engine..."
   },
   "analysis": {
     "status": "SUPPORTED",
-    "learning": "Heating utility fell to 96.25 kW..."
+    "learning": "..."
   },
   "next_decision": {
-    "reason": "Because heating improved at delta_t_min=7.5 C, test an even lower value (6.0 C)...",
+    "reason": "...",
     "experiment": { "delta_t_min": 6.0 }
   }
 }
 ```
 
-## Suggested UI sections
+### Enums / important values
 
-For each experiment card / step:
+- `analysis.status`: `SUPPORTED` | `REJECTED` | `INCONCLUSIVE`
+- `result.status`: `VALID` | `REJECTED`
+- `result.generated_by`: expect `SCIENCE_PINCH_ENGINE` (real Pinch). Fallback may be `FAKE_EXPERIMENT`.
+- `validation.status`: `PASS` | `REJECTED`
 
-- Hypothesis text + id  
-- Experiment: variable + proposed `delta_t_min`  
-- Result numbers: recovery / heating / cooling  
-- Analysis status badge: `SUPPORTED` | `REJECTED` | `INCONCLUSIVE`  
-- Learning text  
-- Next decision reason + next `delta_t_min`  
+## Suggested UI layout
 
-Also show a clear comparison:
+1. **Header / goal** — scientific question + baseline card  
+2. **Evidence** — from `GET /evidence` or `experiments[i].evidence.items`  
+3. **Run discovery** button → `POST /discovery/run`  
+4. **Experiment timeline** — one card per item in `experiments[]`  
+5. **Agentic proof banner** — `second_changed === true`  
+6. **Compare vs baseline** — show recovery/heating/cooling deltas  
 
-```text
-Experiment #1 delta_t_min = 7.5
-Experiment #2 delta_t_min = 6.0
-Changed because of result #1: YES
-```
+## Merge checklist for frontend
 
-## Easy start path
+1. Pull latest `master`
+2. Scaffold React+Vite+TS inside `frontend/` (or keep app there)
+3. Set `VITE_API_BASE_URL=http://127.0.0.1:8000`
+4. Implement:
+   - baseline card (hardcoded values above are fine)
+   - Run discovery button
+   - render `experiments[]`
+   - show evidence + learning + next decision
+5. Do **not** invent numbers in the UI — only display API values
+6. English UI labels for submission
 
-1. Keep using `frontend/dummy_experiment.json` until API is running  
-2. Add a "Run discovery" button that calls `POST /discovery/run`  
-3. Replace dummy cards with `response.experiments`  
-4. Highlight `agentic_proof.second_changed`
+## Stack recommendation
 
-## Important notes
+- Vite + React + TypeScript
+- Fetch or axios against `VITE_API_BASE_URL`
+- No auth required for local MVP
 
-- Results may currently say `generated_by: "FAKE_EXPERIMENT"`. That is OK for now. Later this becomes the real Pinch engine.  
-- Do not invent numbers in the UI. Only display API values.  
-- `evidence_ids` may be empty until Evidence Agent is added.  
-- Prefer English labels in the UI for the hackathon submission.
-- Evidence may include `EVID-001`, `EVID-002`, `EVID-003` from the local registry.
-- Invented IDs like `EVID-999` are invalid and must not be shown as real citations.
+## Out of scope for frontend (for now)
 
-## Contact / contract freeze
+- Omnigent CLI / Claude chat UI
+- BrightData
+- Editing Pinch equations
+- Changing stream data
 
-If you need a field renamed, tell the agents teammate **before** changing the UI assumptions.  
-Shared contract = this JSON shape + the endpoints above.
+## Contract freeze
+
+If a field must be renamed, ask backend/agents first.  
+Canonical doc in repo: `frontend/HANDOFF.md`  
+Live schema explorer: `http://127.0.0.1:8000/docs`
