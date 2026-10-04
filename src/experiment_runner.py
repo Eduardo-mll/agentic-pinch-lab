@@ -12,6 +12,9 @@ from src.logger import (
     save_experiment
 )
 
+from src.network_economics import (
+    evaluate_baseline_network_economics
+)
 
 from src.paths import BASELINE_PATH
 
@@ -98,6 +101,28 @@ def run_experiment(
             )
         )
 
+        warnings: list[str] = []
+        network_economics = None
+
+        try:
+            network_economics = (
+                evaluate_baseline_network_economics(
+                    streams=streams,
+                    hot_pinch=float(
+                        pinch_result["hot_pinch_c"]
+                    ),
+                    cold_pinch=float(
+                        pinch_result["cold_pinch_c"]
+                    ),
+                    delta_t_min=delta_t_min,
+                )
+            )
+        except Exception as economics_error:
+            warnings.append(
+                "Network economics unavailable: "
+                f"{economics_error}"
+            )
+
         elapsed = (
             time.perf_counter()
             - start_time
@@ -123,13 +148,49 @@ def run_experiment(
                     delta_t_min
             },
 
-            "results":
-                pinch_result,
+            "results": {
+                "energy":
+                    pinch_result,
+
+                "network":
+                    None
+                    if network_economics is None
+                    else {
+                        "total_area_m2":
+                            network_economics[
+                                "total_area_m2"
+                            ],
+                        "number_of_exchangers":
+                            network_economics[
+                                "number_of_exchangers"
+                            ],
+                        "process_heat_kw":
+                            network_economics[
+                                "process_heat_kw"
+                            ],
+                        "topology":
+                            network_economics.get(
+                                "topology"
+                            ),
+                        "exchangers":
+                            network_economics[
+                                "exchangers"
+                            ],
+                    },
+
+                "economics":
+                    None
+                    if network_economics is None
+                    else network_economics[
+                        "economics"
+                    ],
+            },
 
             "execution_time_seconds":
                 elapsed,
 
-            "warnings": []
+            "warnings":
+                warnings
         }
 
     except Exception as error:

@@ -1,8 +1,0 @@
-name: evidence_agent
-role: Retrieve and structure approved scientific evidence for the discovery question.
-tools:
-  - evidence_store
-permissions:
-  may_retrieve_web: false
-  may_run_pinch: false
-  may_write_evidence_store: true

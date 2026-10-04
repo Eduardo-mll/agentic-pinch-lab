@@ -1,4 +1,4 @@
-from pinch_lab.omnigent_tools import (
+from pinch_lab.tools.omnigent_tools import (
     tool_gather_evidence,
     tool_run_discovery_loop,
     tool_run_experiment,

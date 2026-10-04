@@ -1,7 +1,0 @@
-name: hypothesis_agent
-role: Formulate a falsifiable hypothesis about delta_t_min and utility demand.
-tools: []
-permissions:
-  may_retrieve_web: false
-  may_run_pinch: false
-  may_read_evidence_store: true

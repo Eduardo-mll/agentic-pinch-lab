@@ -22,6 +22,11 @@ The next experiment must change because of the previous numerical result.
 5. MVP controllable variable is only `delta_t_min` (range 5–30 C).
 6. Stream data (Tin, Tout, FCp, h, identities) is locked.
 
+## Handoffs
+
+Follow `omnigent/policies/handoffs.yaml`.
+Do not skip an agent, and do not let one agent invent another agent's output.
+
 ## Preferred workflow
 
 1. Call `gather_evidence` for the scientific question.

@@ -1,0 +1,115 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "Libre Baskerville", Georgia, serif;
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ai: var(--ai);
+  --color-ai-soft: var(--ai-soft);
+  --color-engine: var(--engine);
+  --color-engine-foreground: var(--engine-foreground);
+  --color-engine-accent: var(--engine-accent);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-heat: var(--heat);
+  --color-cool: var(--cool);
+  --color-recovery: var(--recovery);
+}
+
+:root {
+  --radius: 0.25rem;
+  --background: #071D2C;
+  --foreground: #e7f3f6;
+  --card: #0b293b;
+  --card-foreground: #e7f3f6;
+  --popover: #102f40;
+  --popover-foreground: #e7f3f6;
+  --primary: #68D8EB;
+  --primary-foreground: #071D2C;
+  --secondary: #0A5274;
+  --secondary-foreground: #e7f3f6;
+  --muted: #123449;
+  --muted-foreground: #9ab5c2;
+  --accent: #164a62;
+  --accent-foreground: #e7f3f6;
+  --destructive: #eb807d;
+  --destructive-foreground: #071D2C;
+  --border: #275266;
+  --input: #357088;
+  --ring: #68D8EB;
+  --ai: #BD91D9;
+  --ai-soft: #382e50;
+  --engine: #081927;
+  --engine-foreground: #e7f3f6;
+  --engine-accent: #68D8EB;
+  --success: #81d7aa;
+  --success-soft: #173c3c;
+  --heat: #f1a273;
+  --cool: #78afea;
+  --recovery: #7de4bd;
+  --gradient-primary: linear-gradient(110deg, var(--primary), var(--ai));
+  --shadow-glow: 0 0 28px color-mix(in srgb, var(--ai) 26%, transparent);
+  --shadow-card: 0 20px 55px color-mix(in srgb, var(--engine) 45%, transparent);
+}
+@layer base {
+  * { border-color: var(--border); }
+  body { background-color: var(--background); color: var(--foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+}
+@utility bg-gradient-primary { background-image: var(--gradient-primary); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
+@utility shadow-card { box-shadow: var(--shadow-card); }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+@utility animate-pulse-dot { animation: pulse-dot 1.7s ease-in-out infinite; }
+.ocean-atmosphere {
+  background: radial-gradient(ellipse 52% 42% at 52% 3%, color-mix(in srgb, var(--secondary) 30%, transparent), transparent 80%),
+    radial-gradient(ellipse 32% 38% at 100% 66%, color-mix(in srgb, var(--ai) 9%, transparent), transparent 80%);
+}
+.panel { background: color-mix(in srgb, var(--card) 76%, transparent); border: 1px solid var(--border); box-shadow: var(--shadow-card); }
+.chart-grid { background-image: linear-gradient(color-mix(in srgb, var(--primary) 3%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--primary) 3%, transparent) 1px, transparent 1px); background-size: 24px 24px; }
+@media (prefers-reduced-motion: reduce) { .animate-pulse-dot { animation: none; } }
+
+/* Long-form scientific workspace */
+@theme inline { --font-heading: "Archivo Black", "IBM Plex Sans", sans-serif; }
+@utility gradient-text { background-image: var(--gradient-primary); background-clip: text; color: transparent; }
+.page-wrap { width: min(100% - 2.5rem, 1404px); margin-inline: auto; }
+.section-label { display: inline-flex; align-items: center; gap: .65rem; font-family: var(--font-mono); font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.section-title { font-family: var(--font-heading); font-size: clamp(2.35rem, 4.5vw, 4.9rem); line-height: 1.03; font-weight: 900; text-transform: uppercase; }
+.section-band { background: linear-gradient(180deg, var(--background), color-mix(in srgb, var(--secondary) 12%, var(--background))); }
+.hero-shade { background: linear-gradient(90deg, color-mix(in srgb, var(--background) 92%, transparent) 0%, color-mix(in srgb, var(--background) 67%, transparent) 38%, transparent 79%), linear-gradient(0deg, var(--background), transparent 32%); }
+.hero-title { text-shadow: 0 5px 30px color-mix(in srgb, var(--background) 55%, transparent); }
+.brand-symbol { background: color-mix(in srgb, var(--primary) 12%, transparent); box-shadow: 0 0 25px color-mix(in srgb, var(--primary) 16%, transparent); }
+.nav-link { transition: color .2s ease; }
+.nav-link:hover, .nav-link:focus-visible { color: var(--primary); }
+.stage-card:hover { box-shadow: 0 15px 30px color-mix(in srgb, var(--ai) 10%, transparent); }
+.closing-band { background: linear-gradient(105deg, var(--engine), color-mix(in srgb, var(--ai-soft) 60%, var(--background)), var(--engine)); }
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 1rem; }
+@media (max-width: 640px) { .hero-shade { background: linear-gradient(90deg, color-mix(in srgb, var(--background) 93%, transparent), color-mix(in srgb, var(--background) 60%, transparent)), linear-gradient(0deg, var(--background), transparent 45%); } .hero-stage, .hero-stage > div:last-child { min-height: 680px; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .stage-card { transition: none; } }

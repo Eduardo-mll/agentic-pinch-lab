@@ -1,0 +1,43 @@
+{
+  "description": "Original sulfuric-acid HEN topology (match order matters). Duties are adapted greedily per ΔTmin.",
+  "matches": [
+    {
+      "hot_stream": "H1",
+      "cold_stream": "C2",
+      "region": "above",
+      "heat_duty": 350
+    },
+    {
+      "hot_stream": "H2",
+      "cold_stream": "C1",
+      "region": "above",
+      "heat_duty": 90
+    },
+    {
+      "hot_stream": "H1",
+      "cold_stream": "C1",
+      "region": "below",
+      "heat_duty": 50
+    }
+  ],
+  "utilities": {
+    "hot_utility_temp_c": 175.6,
+    "hot_utility_h": 16.45,
+    "cold_utility_temp_c": 25.2,
+    "cold_utility_h": 0.324,
+    "notes": "Isothermal utilities with film coefficients calibrated to the published area/cost benchmark (HX areas and ~$104,828.92/year total)."
+  },
+  "benchmark_at_delta_t_min_10": {
+    "areas_m2": {
+      "H1-C2": 88.1868,
+      "H2-C1": 38.1787,
+      "H1-C1": 21.5092,
+      "heater": 13.1427,
+      "cooler_H1": 2.8721,
+      "cooler_H2": 22.0156
+    },
+    "equipment_cost_per_year": 92878.92,
+    "utility_cost_per_year": 11950.0,
+    "total_cost_per_year": 104828.92
+  }
+}

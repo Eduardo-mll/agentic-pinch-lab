@@ -31,12 +31,12 @@ and chooses a better next experiment.
 
 ```text
 agentic-pinch-lab/
-├── backend/          # FastAPI + Pinch engine
-├── pinch_lab/        # Discovery runtime (agents + tools in Python)
-├── src/              # Science Pinch engine (adapted from science branch)
-├── data/             # Baseline streams for science engine
-├── scientific/       # Human-readable scientific contract / evidence sources
-├── omnigent/         # Omnigent YAML agents (Claude coordinator)
+├── backend/          # FastAPI. /pinch delegates to src/
+├── pinch_lab/        # Discovery runtime (Python agents + tools/)
+├── src/              # Pinch, network, and cost engine
+├── data/             # Engine inputs (baseline streams and HEN)
+├── scientific/       # Human-readable scientific contract
+├── omnigent/         # Omnigent YAML agents and policies
 ├── evidence/         # Approved evidence registry
 ├── results/          # Experiment outputs (JSON)
 ├── frontend/         # Dashboard

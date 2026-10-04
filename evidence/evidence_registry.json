@@ -10,7 +10,11 @@
       "claim_supported": "The locked process has a validated baseline utility and recovery target at delta_t_min = 10 C.",
       "confidence": "high",
       "approved": true,
-      "tags": ["baseline", "delta_t_min", "utilities"]
+      "tags": [
+        "baseline",
+        "delta_t_min",
+        "utilities"
+      ]
     },
     {
       "evidence_id": "EVID-002",
@@ -22,7 +26,11 @@
       "claim_supported": "Lowering delta_t_min is a plausible lever for reducing external utility demand.",
       "confidence": "high",
       "approved": true,
-      "tags": ["pinch", "delta_t_min", "heat_recovery"]
+      "tags": [
+        "pinch",
+        "delta_t_min",
+        "heat_recovery"
+      ]
     },
     {
       "evidence_id": "EVID-003",
@@ -34,8 +42,66 @@
       "claim_supported": "Computational experiments should change delta_t_min only in the MVP.",
       "confidence": "high",
       "approved": true,
-      "tags": ["mvp", "constraints", "delta_t_min"]
+      "tags": [
+        "mvp",
+        "constraints",
+        "delta_t_min"
+      ]
+    },
+    {
+      "evidence_id": "EVID-WEB-9CFB1ADEE0",
+      "title": "Pinch analysis (2022)",
+      "source_url": "https://www.ipieca.org/resources/energy-efficiency-compendium/pinch-analysis-2022",
+      "source_type": "web_serp",
+      "retrieved_at": "2026-10-04T07:21:15.788646+00:00",
+      "relevant_excerpt": "In general, a larger ΔTmin will result in lower equipment cost and higher utility cost. Systematic techniques for establishing energy targets and designing heat ...Read more",
+      "claim_supported": "External literature/web context related to Pinch Analysis / delta_t_min (query: Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints? Pinch Analysis delta Tmin heat recovery heat exchanger network). Qualitative only — do not invent numerical Pinch targets from this source.",
+      "confidence": "low",
+      "approved": true,
+      "tags": [
+        "web",
+        "pinch",
+        "delta_t_min",
+        "brightdata"
+      ],
+      "query": "Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints? Pinch Analysis delta Tmin heat recovery heat exchanger network"
+    },
+    {
+      "evidence_id": "EVID-WEB-6E7AC404D2",
+      "title": "Introduction to Pinch Technology - DTU Research Database",
+      "source_url": "https://orbit.dtu.dk/files/123620478/Pinch_Tech_1.pdf",
+      "source_type": "web_serp",
+      "retrieved_at": "2026-10-04T07:21:15.788646+00:00",
+      "relevant_excerpt": "∆Tmin is observed is called as “pinch point” main objective of pinch analysis is to achieve financial savings by better process heat integration reducing the ...",
+      "claim_supported": "External literature/web context related to Pinch Analysis / delta_t_min (query: Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints? Pinch Analysis delta Tmin heat recovery heat exchanger network). Qualitative only — do not invent numerical Pinch targets from this source.",
+      "confidence": "low",
+      "approved": true,
+      "tags": [
+        "web",
+        "pinch",
+        "delta_t_min",
+        "brightdata"
+      ],
+      "query": "Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints? Pinch Analysis delta Tmin heat recovery heat exchanger network"
+    },
+    {
+      "evidence_id": "EVID-WEB-F0900A5D58",
+      "title": "Introduction to Pinch Technology",
+      "source_url": "https://www.ou.edu/class/che-design/a-design/Introduction%20to%20Pinch%20Technology-LinhoffMarch.pdf",
+      "source_type": "web_serp",
+      "retrieved_at": "2026-10-04T07:21:15.788646+00:00",
+      "relevant_excerpt": "The lower the DTmin chosen, the lower the energy costs, but conversely the higher the heat exchanger capital costs, as lower temperature driving forces",
+      "claim_supported": "External literature/web context related to Pinch Analysis / delta_t_min (query: Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints? Pinch Analysis delta Tmin heat recovery heat exchanger network). Qualitative only — do not invent numerical Pinch targets from this source.",
+      "confidence": "low",
+      "approved": true,
+      "tags": [
+        "web",
+        "pinch",
+        "delta_t_min",
+        "brightdata"
+      ],
+      "query": "Can lowering delta_t_min reduce external utility demand while respecting Pinch Analysis constraints? Pinch Analysis delta Tmin heat recovery heat exchanger network"
     }
   ],
-  "notes": "Local approved evidence only. BrightData/web retrieval can be added later for the Evidence Agent alone."
+  "notes": "Local approved evidence plus Bright Data SERP web hits. Web hits are qualitative context only; Pinch numbers must come from Python."
 }

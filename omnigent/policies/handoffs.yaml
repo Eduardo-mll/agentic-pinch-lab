@@ -1,0 +1,16 @@
+# Scientific handoffs
+
+Each agent owns one decision. The next agent may only consume the structured output.
+
+| Agent | Scientific decision | Inputs | Outputs | Tools |
+|---|---|---|---|---|
+| Evidence | Which approved evidence is relevant? | scientific question | `evidence_ids`, records, web status | `gather_evidence`, `validate_evidence_ids`, Bright Data SERP |
+| Hypothesis | Which falsifiable idea is worth testing? | question, evidence IDs, previous analysis | hypothesis id, text, direction, expected effect | none (reads evidence only) |
+| Planner | Which single ΔTmin tests that hypothesis? | hypothesis, previous result | `experiment_id`, `proposed_value` in 5–30 C | none (does not calculate Pinch) |
+| Analyst | What did the Python result show, and what ΔTmin is next? | hypothesis, experiment, Python result | `SUPPORTED` / `REJECTED` / `INCONCLUSIVE`, learning, next ΔTmin | `run_experiment` to re-read only; must not rewrite numbers |
+| Coordinator | Did the loop stay evidence → hypothesis → experiment → learning → a changed next experiment? | all of the above | shared research record | all tools, orchestration only |
+
+Shared record:
+- Evidence IDs must exist in `evidence/evidence_registry.json`.
+- Each run is saved to `results/runs/RUN-*.json` and indexed in `results/experiments.json`.
+- Pinch numbers come only from `src/`.

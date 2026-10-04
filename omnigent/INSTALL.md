@@ -1,9 +1,9 @@
-# Install Omnigent + Claude (Windows)
+# Install Omnigent + Claude Haiku + Bright Data (Windows)
 
 Our Python package is named **`pinch_lab`** on purpose.  
 The top-level **`omnigent/`** folder holds Omnigent YAML agents only.
 
-## 1. Project venv (already used for FastAPI / pytest)
+## 1. Project venv
 
 ```powershell
 cd C:\Users\troni\Desktop\Hackaton\agentic-pinch-lab
@@ -12,75 +12,69 @@ python -m venv .venv
 pip install -e ".[dev]"
 ```
 
-## 2. Install Omnigent CLI (separate tool)
-
-Install `uv` first if needed: https://docs.astral.sh/uv/
-
-Then:
+## 2. Install Omnigent CLI
 
 ```powershell
 uv tool install --python 3.12 omnigent
-```
-
-Check:
-
-```powershell
 omni --help
-# or
-omnigent --help
 ```
 
-## 3. Anthropic key
+## 3. Keys in `.env`
 
-Copy `.env.example` to `.env` and set:
+Copy `.env.example` → `.env` and set:
 
 ```text
-ANTHROPIC_API_KEY=your_key_here
+USE_CLAUDE=1
+ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_MODEL=claude-haiku-4-5
+
+USE_BRIGHTDATA=1
+BRIGHTDATA_API_KEY=...
+BRIGHTDATA_ZONE=pinch_lab_serp
 ```
 
-Also set it in the current shell before running Omnigent:
+Notes:
+- **No spaces** around `=`
+- The API key cannot create a zone. In Bright Data, add a **SERP API** zone named `pinch_lab_serp`.
+- We use **Claude Haiku 4.5** (cheaper) instead of Sonnet
+
+Also export for Omnigent in the current shell:
 
 ```powershell
-$env:ANTHROPIC_API_KEY = "your_key_here"
+$env:ANTHROPIC_API_KEY = (Get-Content .env | Where-Object { $_ -match '^ANTHROPIC_API_KEY=' }) -replace '^ANTHROPIC_API_KEY=',''
+$env:PYTHONPATH = (Get-Location).Path
 ```
 
-Never commit `.env`.
-
-## 4. Run the coordinator
-
-From the repo root, with the project venv active so `pinch_lab` imports resolve:
+## 4. Local discovery API (Claude + Bright Data wired)
 
 ```powershell
 .\.venv\Scripts\activate
 $env:PYTHONPATH = (Get-Location).Path
-omni run .\omnigent\coordinator\
+uvicorn backend.main:app --reload --port 8000
 ```
 
-If your install uses `omnigent` instead of `omni`, run:
+`Run cycle` in the UI will:
+1. gather evidence (local + Bright Data SERP)
+2. form hypothesis (Claude Haiku when enabled)
+3. run Pinch + area/cost in Python
+4. narrate learning with Claude Haiku (numbers still from Python)
+
+## 5. Omnigent coordinator (optional live agent)
 
 ```powershell
-omnigent run .\omnigent\coordinator\
+omni run .\omnigent\coordinator\ --harness claude-sdk --model claude-haiku-4-5
 ```
 
-Ask the coordinator something like:
+Ask something like:
 
 ```text
 Run a 2-step discovery loop for lowering delta_t_min and explain why experiment 2 changed.
 ```
 
-It should call tools (`gather_evidence`, `run_discovery_loop` / `run_experiment`) instead of inventing numbers.
-
-## 5. Fallback without Omnigent CLI
-
-If Omnigent is not installed yet, the deterministic loop still works:
+## 6. Fallback without cloud
 
 ```powershell
+$env:USE_CLAUDE=0
+$env:USE_BRIGHTDATA=0
 python -m pinch_lab.run_discovery_loop
-uvicorn backend.main:app --reload
 ```
-
-## Notes
-
-- Model in YAML: `claude-sonnet-4-6` (change if your Omnigent version expects another id)
-- Exact Omnigent YAML keys can vary by version; adjust `executor` if `omni run` complains
-- Do not `pip install omnigent` into this project as a library named `omnigent` — use the CLI tool install

@@ -14,5 +14,6 @@
 
 ## MVP
 
-Local registry only (`evidence/evidence_registry.json`).  
-BrightData/web access can be added later for this agent alone.
+Approved records live in `evidence/evidence_registry.json`.
+Bright Data SERP may add qualitative web hits (`EVID-WEB-*`) when `BRIGHTDATA_ZONE` exists.
+Pinch numbers still come only from Python.

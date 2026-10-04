@@ -19,7 +19,10 @@ from pinch_lab.agents.evidence import gather_evidence
 from pinch_lab.agents.hypothesis import formulate_hypothesis
 from pinch_lab.agents.planner import propose_experiment
 from pinch_lab.tools import run_computational_experiment
+from pinch_lab.tools.env_loader import load_repo_env
 from pinch_lab.tools.evidence_store import validate_evidence_ids
+
+load_repo_env()
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results" / "runs"
@@ -51,6 +54,8 @@ def _build_record(
         "evidence": {
             "status": evidence_pack.get("status"),
             "message": evidence_pack.get("message"),
+            "sources": evidence_pack.get("sources"),
+            "web": evidence_pack.get("web"),
             "items": [
                 {
                     "evidence_id": item.get("evidence_id"),
@@ -68,6 +73,7 @@ def _build_record(
             "status": "TESTED",
             "expected_effect": hypothesis.get("expected_effect"),
             "direction": hypothesis.get("direction"),
+            "generated_by": hypothesis.get("generated_by"),
         },
         "experiment": {
             "experiment_id": experiment["experiment_id"],
@@ -89,11 +95,26 @@ def _build_record(
             "cooling_utility_kw": result.get("cooling_utility_kw"),
             "hot_pinch_c": result.get("hot_pinch_c"),
             "cold_pinch_c": result.get("cold_pinch_c"),
+            "energy": result.get("energy"),
+            "network": (
+                None
+                if not result.get("network")
+                else {
+                    "total_area_m2": result["network"].get("total_area_m2"),
+                    "number_of_exchangers": result["network"].get(
+                        "number_of_exchangers"
+                    ),
+                    "process_heat_kw": result["network"].get("process_heat_kw"),
+                    "topology": result["network"].get("topology"),
+                }
+            ),
+            "economics": result.get("economics"),
             "message": result.get("message"),
         },
         "analysis": {
             "status": analysis["status"],
             "learning": analysis["learning"],
+            "learning_generated_by": analysis.get("learning_generated_by"),
         },
         "next_decision": analysis["next_decision"],
     }
@@ -147,6 +168,7 @@ def run_loop(steps: int = 2) -> list[dict]:
             previous_analysis=previous_analysis,
             evidence_ids=evidence_pack.get("evidence_ids", []),
             evidence_status=evidence_pack.get("status", "OK"),
+            evidence_items=evidence_pack.get("evidence", []),
         )
         if hypothesis.get("status") == "INSUFFICIENT_EVIDENCE":
             raise ValueError("INSUFFICIENT_EVIDENCE: cannot plan experiments yet.")

@@ -39,9 +39,9 @@ omni run .\omnigent\coordinator\
 
 Coordinator tools (Python):
 
-- `pinch_lab.omnigent_tools.tool_gather_evidence`
-- `pinch_lab.omnigent_tools.tool_validate_evidence_ids`
-- `pinch_lab.omnigent_tools.tool_run_experiment`
-- `pinch_lab.omnigent_tools.tool_run_discovery_loop`
+- `pinch_lab.tools.omnigent_tools.tool_gather_evidence`
+- `pinch_lab.tools.omnigent_tools.tool_validate_evidence_ids`
+- `pinch_lab.tools.omnigent_tools.tool_run_experiment`
+- `pinch_lab.tools.omnigent_tools.tool_run_discovery_loop`
 
 Claude reasons. These tools return the numbers.

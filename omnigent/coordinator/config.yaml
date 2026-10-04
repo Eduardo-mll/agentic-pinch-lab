@@ -9,8 +9,8 @@ instructions: AGENTS.md
 executor:
   type: omnigent
   config:
-    harness: claude
-  model: claude-sonnet-4-6
+    harness: claude-sdk
+  model: claude-haiku-4-5
   auth:
     type: api_key
     api_key: ${ANTHROPIC_API_KEY}
@@ -25,7 +25,7 @@ tools:
   gather_evidence:
     type: function
     description: Select approved local scientific evidence for the question.
-    callable: pinch_lab.omnigent_tools.tool_gather_evidence
+    callable: pinch_lab.tools.omnigent_tools.tool_gather_evidence
     parameters:
       type: object
       properties:
@@ -39,7 +39,7 @@ tools:
   validate_evidence_ids:
     type: function
     description: Validate that cited evidence IDs exist in the registry.
-    callable: pinch_lab.omnigent_tools.tool_validate_evidence_ids
+    callable: pinch_lab.tools.omnigent_tools.tool_validate_evidence_ids
     parameters:
       type: object
       properties:
@@ -52,7 +52,7 @@ tools:
   run_experiment:
     type: function
     description: Run one deterministic computational experiment for delta_t_min.
-    callable: pinch_lab.omnigent_tools.tool_run_experiment
+    callable: pinch_lab.tools.omnigent_tools.tool_run_experiment
     parameters:
       type: object
       properties:
@@ -63,7 +63,7 @@ tools:
   run_discovery_loop:
     type: function
     description: Run the full discovery loop and return structured experiment records.
-    callable: pinch_lab.omnigent_tools.tool_run_discovery_loop
+    callable: pinch_lab.tools.omnigent_tools.tool_run_discovery_loop
     parameters:
       type: object
       properties:

@@ -4,6 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.api.routes import router as discovery_router
 from backend.pinch import run_pinch_analysis
 from backend.pinch.models import PinchResult
+from pinch_lab.tools.env_loader import load_repo_env
+
+load_repo_env()
 
 app = FastAPI(
     title="Agentic Pinch Lab API",

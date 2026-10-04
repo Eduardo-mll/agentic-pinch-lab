@@ -1,7 +1,0 @@
-name: scientific_analyst
-role: Interpret experiment results and propose the next scientific decision.
-tools: []
-permissions:
-  may_retrieve_web: false
-  may_rewrite_numbers: false
-  may_read_python_results: true
