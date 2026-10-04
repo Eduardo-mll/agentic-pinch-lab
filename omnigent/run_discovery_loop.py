@@ -15,9 +15,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from omnigent.agents.analyst import analyze_result
+from omnigent.agents.evidence import gather_evidence
 from omnigent.agents.hypothesis import formulate_hypothesis
 from omnigent.agents.planner import propose_experiment
 from omnigent.tools import fake_experiment
+from omnigent.tools.evidence_store import validate_evidence_ids
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results" / "runs"
@@ -35,6 +37,7 @@ def _utc_now() -> str:
 
 def _build_record(
     *,
+    evidence_pack: dict,
     hypothesis: dict,
     experiment: dict,
     result: dict,
@@ -45,6 +48,20 @@ def _build_record(
         "timestamp": _utc_now(),
         "question": QUESTION,
         "evidence_ids": hypothesis.get("evidence_ids", []),
+        "evidence": {
+            "status": evidence_pack.get("status"),
+            "message": evidence_pack.get("message"),
+            "items": [
+                {
+                    "evidence_id": item.get("evidence_id"),
+                    "title": item.get("title"),
+                    "source_type": item.get("source_type"),
+                    "claim_supported": item.get("claim_supported"),
+                    "confidence": item.get("confidence"),
+                }
+                for item in evidence_pack.get("evidence", [])
+            ],
+        },
         "hypothesis": {
             "id": hypothesis["id"],
             "text": hypothesis["text"],
@@ -104,6 +121,7 @@ def _save_record(record: dict) -> Path:
             "delta_t_min": record["experiment"]["proposed_value"],
             "analysis_status": record["analysis"]["status"],
             "hypothesis_id": record["hypothesis"]["id"],
+            "evidence_ids": record.get("evidence_ids", []),
             "path": rel_path,
         }
     )
@@ -118,11 +136,21 @@ def run_loop(steps: int = 2) -> list[dict]:
     previous_analysis: dict | None = None
     preferred_next: float | None = None
 
+    evidence_pack = gather_evidence(question=QUESTION)
+    citation_check = validate_evidence_ids(evidence_pack.get("evidence_ids", []))
+    if not citation_check["valid"]:
+        raise ValueError(citation_check["message"])
+
     for _ in range(steps):
         hypothesis = formulate_hypothesis(
             question=QUESTION,
             previous_analysis=previous_analysis,
+            evidence_ids=evidence_pack.get("evidence_ids", []),
+            evidence_status=evidence_pack.get("status", "OK"),
         )
+        if hypothesis.get("status") == "INSUFFICIENT_EVIDENCE":
+            raise ValueError("INSUFFICIENT_EVIDENCE: cannot plan experiments yet.")
+
         experiment = propose_experiment(
             hypothesis=hypothesis,
             previous_result=previous_result,
@@ -131,6 +159,7 @@ def run_loop(steps: int = 2) -> list[dict]:
         result = fake_experiment(delta_t_min=float(experiment["proposed_value"]))
         analysis = analyze_result(hypothesis, experiment, result)
         record = _build_record(
+            evidence_pack=evidence_pack,
             hypothesis=hypothesis,
             experiment=experiment,
             result=result,
@@ -153,6 +182,7 @@ def main() -> None:
     second = records[1]["experiment"]["proposed_value"]
 
     print("Discovery loop complete.")
+    print(f"Evidence IDs = {records[0]['evidence_ids']}")
     print(f"Hypothesis #1 = {records[0]['hypothesis']['id']}")
     print(f"Hypothesis #2 = {records[1]['hypothesis']['id']}")
     print(f"Experiment #1 delta_t_min = {first}")

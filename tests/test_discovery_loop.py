@@ -22,6 +22,8 @@ def test_second_experiment_changes_because_of_first_result(tmp_path, monkeypatch
     # Hypothesis is refined after the first analysis.
     assert records[0]["hypothesis"]["id"] == "HYP-001"
     assert records[1]["hypothesis"]["id"] == "HYP-002"
+    assert records[0]["evidence_ids"]
+
 
     # Second experiment must come from analyst next_decision of the first.
     assert second_dt == records[0]["next_decision"]["experiment"]["delta_t_min"]

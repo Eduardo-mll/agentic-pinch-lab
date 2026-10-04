@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from omnigent.run_discovery_loop import HISTORY_PATH, ROOT, run_loop
+from omnigent.tools.evidence_store import list_evidence, validate_evidence_ids
 import json
 
 router = APIRouter(tags=["discovery"])
@@ -65,3 +66,28 @@ def discovery_latest() -> dict:
 
     latest = json.loads(files[-1].read_text(encoding="utf-8"))
     return {"status": "ok", "record": latest}
+
+
+@router.get("/evidence")
+def evidence_list() -> dict:
+    """Return approved local evidence records for the frontend."""
+    items = list_evidence()
+    return {
+        "status": "ok",
+        "count": len(items),
+        "evidence": items,
+    }
+
+
+@router.post("/evidence/validate")
+def evidence_validate(body: dict) -> dict:
+    """Validate that cited evidence IDs exist in the registry."""
+    evidence_ids = body.get("evidence_ids", [])
+    if not isinstance(evidence_ids, list):
+        return {
+            "status": "INVALID_REQUEST",
+            "valid": False,
+            "message": "evidence_ids must be a list",
+        }
+    return validate_evidence_ids([str(x) for x in evidence_ids])
+

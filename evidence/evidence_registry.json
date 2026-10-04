@@ -1,4 +1,41 @@
 {
-  "evidence": [],
-  "notes": "Evidence Agent writes approved records here. Other agents may only cite IDs that exist in this registry."
+  "evidence": [
+    {
+      "evidence_id": "EVID-001",
+      "title": "Process baseline for the sulfuric-acid HEN case",
+      "source_url": "scientific/baseline.json",
+      "source_type": "process_baseline",
+      "retrieved_at": "2026-10-03T00:00:00+00:00",
+      "relevant_excerpt": "At delta_t_min = 10 C the known targets are heat recovery 490 kW, heating 100 kW, cooling 95 kW, hot/cold pinch 80/70 C.",
+      "claim_supported": "The locked process has a validated baseline utility and recovery target at delta_t_min = 10 C.",
+      "confidence": "high",
+      "approved": true,
+      "tags": ["baseline", "delta_t_min", "utilities"]
+    },
+    {
+      "evidence_id": "EVID-002",
+      "title": "Pinch Analysis: smaller delta_t_min can increase recovery potential",
+      "source_url": "evidence/approved/pinch_delta_tmin_principle.md",
+      "source_type": "engineering_principle",
+      "retrieved_at": "2026-10-03T00:00:00+00:00",
+      "relevant_excerpt": "In classical Pinch Analysis, reducing the minimum approach temperature (delta_t_min) generally increases the maximum theoretical process-to-process heat recovery and can reduce external utility targets, at the cost of larger exchanger area.",
+      "claim_supported": "Lowering delta_t_min is a plausible lever for reducing external utility demand.",
+      "confidence": "high",
+      "approved": true,
+      "tags": ["pinch", "delta_t_min", "heat_recovery"]
+    },
+    {
+      "evidence_id": "EVID-003",
+      "title": "MVP controllable variable policy",
+      "source_url": "scientific/variables.json",
+      "source_type": "scientific_policy",
+      "retrieved_at": "2026-10-03T00:00:00+00:00",
+      "relevant_excerpt": "MVP experiments may vary only delta_t_min. Stream identities, Tin, Tout, FCp and h remain locked.",
+      "claim_supported": "Computational experiments should change delta_t_min only in the MVP.",
+      "confidence": "high",
+      "approved": true,
+      "tags": ["mvp", "constraints", "delta_t_min"]
+    }
+  ],
+  "notes": "Local approved evidence only. BrightData/web retrieval can be added later for the Evidence Agent alone."
 }

@@ -9,9 +9,22 @@ def formulate_hypothesis(
     question: str,
     previous_analysis: dict[str, Any] | None = None,
     evidence_ids: list[str] | None = None,
+    evidence_status: str = "OK",
 ) -> dict[str, Any]:
     """Create or refine a falsifiable hypothesis about delta_t_min."""
     evidence_ids = evidence_ids or []
+
+    if evidence_status == "INSUFFICIENT_EVIDENCE" or not evidence_ids:
+        return {
+            "id": "HYP-000",
+            "text": "No hypothesis formed because approved evidence is missing.",
+            "status": "INSUFFICIENT_EVIDENCE",
+            "expected_effect": None,
+            "evidence_ids": [],
+            "variable": "delta_t_min",
+            "direction": None,
+            "question": question,
+        }
 
     if previous_analysis is None:
         return {

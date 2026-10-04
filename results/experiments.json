@@ -57,6 +57,48 @@
       "analysis_status": "SUPPORTED",
       "hypothesis_id": "HYP-002",
       "path": "results/runs/RUN-2D448135.json"
+    },
+    {
+      "run_id": "RUN-19A79FA8",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "path": "results/runs/RUN-19A79FA8.json"
+    },
+    {
+      "run_id": "RUN-7FC43D75",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-002",
+      "path": "results/runs/RUN-7FC43D75.json"
+    },
+    {
+      "run_id": "RUN-D4E5CECB",
+      "experiment_id": "EXP-001",
+      "delta_t_min": 7.5,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-001",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-D4E5CECB.json"
+    },
+    {
+      "run_id": "RUN-6EBB2AE0",
+      "experiment_id": "EXP-002",
+      "delta_t_min": 6.0,
+      "analysis_status": "SUPPORTED",
+      "hypothesis_id": "HYP-002",
+      "evidence_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003"
+      ],
+      "path": "results/runs/RUN-6EBB2AE0.json"
     }
   ],
   "notes": "Updated by omnigent/run_discovery_loop.py"

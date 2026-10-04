@@ -2,11 +2,13 @@
 
 ## MVP agents (current slice)
 
-1. **Hypothesis Agent** — forms / refines a falsifiable idea
-2. **Experiment Planner** — proposes a `delta_t_min` experiment
-3. **Scientific Analyst** — interprets the result and chooses the next experiment
+1. **Evidence Agent** — selects approved local evidence IDs
+2. **Hypothesis Agent** — forms / refines a falsifiable idea
+3. **Experiment Planner** — proposes a `delta_t_min` experiment
+4. **Scientific Analyst** — interprets the result and chooses the next experiment
 
-Evidence Agent comes next (local cache first; BrightData later).
+BrightData/web retrieval can be added later for the Evidence Agent only.
+
 
 ## HTTP API (for frontend)
 
@@ -19,6 +21,8 @@ uvicorn backend.main:app --reload
 - `POST /discovery/run` — run the loop (`{"steps": 2}`)
 - `GET /discovery/history` — experiment index
 - `GET /discovery/latest` — newest saved record
+- `GET /evidence` — approved local evidence list
+- `POST /evidence/validate` — reject invented evidence IDs
 - `GET /health`
 - `GET /pinch?delta_t_min=10`
 

@@ -1,12 +1,16 @@
 name: pinch_lab_coordinator
 workflow:
+  - evidence
   - hypothesis
   - planner
   - experiment_tool
   - analyst
   - next_experiment
 agents:
+  - evidence
+  - hypothesis
   - planner
   - analyst
 tools:
+  - evidence_store
   - fake_experiment
